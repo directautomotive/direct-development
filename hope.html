@@ -1,10 +1,10 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!doctype html><html lang="en" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>2729 Hope St — Direct Development Group</title>
 <style>[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=Public+Sans:wght@400;500;600;700&display=swap">
 <style>
 :root{
-  --ground:#F6F5F1; --surface:#FFFFFF; --ink:#20242A; --muted:#66707A;
+  --ground:#FFFFFF; --surface:#FFFFFF; --ink:#20242A; --muted:#66707A;
   --line:#E4E2DA; --accent:#1E6E9C; --accent-soft:#DFEDF5; --good:#2F7D4F;
   --good-soft:#E2F0E7; --bad:#B3403A; --warn:#A87708; --chip:#EEEDE7;
 }
@@ -1320,8 +1320,8 @@ function setMode(m){
   if (!simple) buildChart();
 }
 function boot(){
-  var startMode = "simple";
-  try { startMode = localStorage.getItem("viewMode") || "simple"; } catch (err) {}
+  var startMode = "adv";
+  try { startMode = localStorage.getItem("viewMode") || "adv"; } catch (err) {}
   el("mode-simple").addEventListener("click", function(){ setMode("simple"); });
   el("mode-adv").addEventListener("click", function(){ setMode("adv"); });
   setMode(startMode);
