@@ -63,6 +63,7 @@
   }
 
   /* ---------- db shim for a project page ---------- */
+  var rawById = {};
   function makeDb(project){
     var entries = [], loaded = false, settings = {};
     var subs = { costs: [], planned: [], rent: [], receipts: [] }, metaSubs = { settings: [], milestones: [] };
@@ -91,7 +92,7 @@
       if (busy) return busy;
       busy = Promise.all([loadEntries(project), sb.from("projects").select("settings").eq("id", project).single()])
         .then(function(r){
-          entries = r[0];
+          entries = r[0]; rawById = {}; entries.forEach(function(e){ rawById[e.id] = e; });
           settings = (r[1].data && r[1].data.settings) || {};
           loaded = true; notify();
         })
@@ -101,7 +102,7 @@
     }
     function rowFrom(store, body){
       var kind = KIND[store];
-      return {
+      var row = {
         project: project, kind: kind,
         date: body.date || null,
         month: body.month || (body.date ? String(body.date).slice(0, 7) : null),
@@ -109,6 +110,8 @@
         descr: body.desc || "", unit: body.unit || null,
         amt: Math.round(Number(body.amt) * 100) / 100
       };
+      if (body.photo !== undefined) row.meta = { photo: body.photo || null };
+      return row;
     }
     function dupes(row){
       return entries.filter(function(e){
@@ -183,7 +186,36 @@
     document.body.appendChild(t); setTimeout(function(){ t.remove(); }, 7000);
   }
 
+  /* receipt photos: shrink on the phone (max 1600 px, JPEG) then store in the private "receipts" bucket */
+  function shrink(file){
+    return new Promise(function(resolve){
+      var img = new Image(), url = URL.createObjectURL(file);
+      img.onload = function(){
+        var k = Math.min(1, 1600 / Math.max(img.width, img.height));
+        var c = document.createElement("canvas"); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+        c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+        c.toBlob(function(b){ URL.revokeObjectURL(url); resolve(b || file); }, "image/jpeg", 0.82);
+      };
+      img.onerror = function(){ resolve(file); };
+      img.src = url;
+    });
+  }
+  function uploadPhoto(file){
+    var project = document.body.getAttribute("data-project") || "misc";
+    return shrink(file).then(function(blob){
+      var path = project + "/" + new Date().toISOString().slice(0, 10) + "-" + Math.random().toString(36).slice(2, 10) + ".jpg";
+      return sb.storage.from("receipts").upload(path, blob, { contentType: "image/jpeg", upsert: false }).then(function(r){
+        if (r.error) throw r.error;
+        return { path: path, preview: URL.createObjectURL(blob) };
+      });
+    });
+  }
+  function photoUrl(path){
+    return sb.storage.from("receipts").createSignedUrl(path, 3600).then(function(r){ return r.data ? r.data.signedUrl : null; });
+  }
+
   window.DDG = {
+    raw: function(id){ return rawById[id] || null; }, uploadPhoto: uploadPhoto, photoUrl: photoUrl,
     sb: sb, ready: ready, loadProjects: loadProjects, loadEntries: loadEntries,
     signOut: function(){ return sb.auth.signOut().then(function(){ location.href = "./"; }); }
   };

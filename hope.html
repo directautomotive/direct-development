@@ -200,7 +200,7 @@ td button.pay{background:var(--good-soft); color:var(--good); border:0; border-r
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>window.DDG_META_DEFAULTS={milestones:{items:[{id:"owned",label:"Property acquired",done:true,date:"2021-02-26"},{id:"turns",label:"Unit turns / repairs done",done:false,date:""},{id:"rented",label:"All 5 units rented",done:false,date:""},{id:"stable",label:"Rents stabilized (seasoned for refinance)",done:false,date:""},{id:"refi",label:"Debt-service-coverage refinance closed",done:false,date:""}]},settings:{propValue:776386,apprRate:6.3}};</script>
 <script src="ddg.js"></script>
-</head><body data-project="hope-2729">
+</head><body data-project="hope-2729" data-name="2729 Hope St" data-sub="5 units · Huntington Park · PennyMac $3,535.20/month">
 
 <div class="wrap">
   <nav class="navbar"><a href="./">&lsaquo; All projects</a><span class="sp"></span><button type="button" onclick="DDG.signOut()">Sign out</button></nav>
@@ -341,14 +341,14 @@ td button.pay{background:var(--good-soft); color:var(--good); border:0; border-r
           <option>Refund</option>
         </optgroup>
       </select>
-      <input type="text" id="a-desc" placeholder="What was it for" required aria-label="Description">
+      <input type="text" id="a-desc" placeholder="Description" required aria-label="Description">
       <input type="number" id="a-amt" step="0.01" min="0.01" placeholder="Amount $" required aria-label="Amount in dollars">
       <div class="btns"><button type="submit" id="a-btn">Add</button><button type="button" class="cancelbtn" id="a-cancel" hidden>Cancel</button></div>
     </form>
     <div class="catfilter" id="catfilter"></div>
     <div class="tablebox">
       <table>
-        <thead><tr><th>Date</th><th>Category</th><th>What</th><th class="amt">Amount</th><th></th></tr></thead>
+        <thead><tr><th>Date</th><th>Category</th><th>Description</th><th class="amt">Amount</th><th></th></tr></thead>
         <tbody id="rows"><tr><td colspan="5" class="note">Loading entries&hellip;</td></tr></tbody>
         <tfoot>
           <tr><td colspan="3">Money out (paid)</td><td class="amt num out" id="ledger-total">&mdash;</td><td></td></tr>
@@ -524,7 +524,7 @@ function setCat(v){
   sel.value = v;
 }
 function syncDescHint(){
-  el("a-desc").placeholder = el("a-cat").value === "Rent" ? "Tenant name" : "What was it for";
+  el("a-desc").placeholder = el("a-cat").value === "Rent" ? "Tenant name" : "Description";
 }
 state.edit = null;
 state.hiddenCats = {};
@@ -573,9 +573,9 @@ function buildEditRow(row){
 
   var ti = document.createElement("input");
   ti.type = "text"; ti.value = d.desc; ti.setAttribute("aria-label", "Description");
-  ti.placeholder = d.cat === "Rent" ? "Tenant name" : "What was it for";
+  ti.placeholder = d.cat === "Rent" ? "Tenant name" : "Description";
   ti.addEventListener("input", function(){ d.desc = ti.value; });
-  cs.addEventListener("change", function(){ d.cat = cs.value; ti.placeholder = d.cat === "Rent" ? "Tenant name" : "What was it for"; });
+  cs.addEventListener("change", function(){ d.cat = cs.value; ti.placeholder = d.cat === "Rent" ? "Tenant name" : "Description"; });
   cell(ti);
 
   var ai = document.createElement("input");
@@ -1564,5 +1564,5 @@ function boot(){
 }
 boot();
 </script>
-
+<script src="mobile.js"></script>
 </body></html>
