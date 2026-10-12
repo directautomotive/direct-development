@@ -1,0 +1,1641 @@
+<!doctype html><html lang="en" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>6421 Converse Ave — Direct Development Group</title>
+<style>[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@600;700&family=Public+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --ground:#FFFFFF; --surface:#FFFFFF; --ink:#20242A; --muted:#66707A;
+  --line:#E4E2DA; --accent:#B4510F; --accent-soft:#F6E7DA; --good:#2F7D4F;
+  --good-soft:#E2F0E7; --bad:#B3403A; --warn:#A87708; --chip:#EEEDE7;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#15181C; --surface:#1E2228; --ink:#E9EBED; --muted:#99A2AB;
+    --line:#2C323A; --accent:#F08A3E; --accent-soft:#39281A; --good:#63B98A;
+    --good-soft:#1F3328; --bad:#E07A72; --warn:#E3B341; --chip:#272C33;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#15181C; --surface:#1E2228; --ink:#E9EBED; --muted:#99A2AB;
+  --line:#2C323A; --accent:#F08A3E; --accent-soft:#39281A; --good:#63B98A;
+  --good-soft:#1F3328; --bad:#E07A72; --warn:#E3B341; --chip:#272C33;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:"Public Sans",system-ui,sans-serif; font-size:15px; line-height:1.5;
+  margin:0; padding-inline:16px; padding-block:20px 48px;
+}
+.wrap{max-width:980px; margin:0 auto; display:flex; flex-direction:column; gap:20px}
+h1,h2{font-family:"Barlow Semi Condensed","Public Sans",sans-serif; margin:0}
+h1{font-size:30px; font-weight:700; letter-spacing:.2px; text-wrap:balance}
+h2{font-size:17px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+header .sub{color:var(--muted); margin-top:2px}
+.pill{display:inline-block; background:var(--accent-soft); color:var(--accent);
+  font-weight:700; font-size:12px; letter-spacing:.6px; text-transform:uppercase;
+  padding:3px 10px; border-radius:999px; margin-bottom:8px}
+.tiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(215px,1fr)); gap:12px}
+.tile{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:14px 16px}
+.tile .label{font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.7px; color:var(--muted)}
+.tile .big{font-family:"Barlow Semi Condensed",sans-serif; font-size:28px; font-weight:700; margin-top:4px}
+.tile .sub{font-size:12.5px; color:var(--muted); margin-top:4px}
+.tile.hot{border-top:3px solid var(--accent)}
+.big.gain{color:var(--good)}
+.cols{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+@media (max-width:720px){.cols{grid-template-columns:1fr}}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:16px 18px}
+.card h2{margin-bottom:10px}
+.facts{display:grid; grid-template-columns:1fr auto; row-gap:7px; column-gap:16px; font-size:14px}
+.facts dt{color:var(--muted); margin:0}
+.facts dd{margin:0; text-align:right; font-weight:600}
+.facts .split{grid-column:1/-1; border-top:1px dashed var(--line); margin:4px 0}
+.ms{display:flex; flex-direction:column; gap:8px}
+.ms button{display:flex; align-items:center; gap:10px; width:100%; text-align:left;
+  background:var(--chip); border:1px solid var(--line); border-radius:8px;
+  padding:9px 12px; font:inherit; color:var(--ink); cursor:pointer}
+.ms button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.ms .dot{width:18px; height:18px; border-radius:50%; border:2px solid var(--muted); flex:none}
+.ms .done .dot{background:var(--good); border-color:var(--good)}
+.ms .done{background:var(--good-soft)}
+.ms .when{margin-left:auto; color:var(--muted); font-size:12.5px}
+.ms .hint{font-size:12px; color:var(--muted)}
+.budget{margin-top:12px}
+.bar{height:10px; background:var(--chip); border-radius:5px; overflow:hidden; margin-top:6px}
+.bar i{display:block; height:100%; background:var(--accent); border-radius:5px 0 0 5px}
+form.add{display:grid; grid-template-columns:130px 115px 160px 1fr 120px auto; gap:8px; margin:10px 0 4px}
+form.add.simple{grid-template-columns:130px 160px 1fr 120px auto}
+@media (max-width:720px){form.add{grid-template-columns:1fr 1fr}}
+form.add input,form.add select{font:inherit; color:var(--ink); background:var(--ground);
+  border:1px solid var(--line); border-radius:7px; padding:8px 10px; min-width:0}
+form.add button{font:inherit; font-weight:700; background:var(--accent); color:#fff;
+  border:0; border-radius:7px; padding:8px 16px; cursor:pointer}
+form.add button:disabled{opacity:.5; cursor:default}
+.tablebox{overflow-x:auto}
+table{width:100%; border-collapse:collapse; font-size:14px}
+th{font-size:11.5px; text-transform:uppercase; letter-spacing:.6px; color:var(--muted);
+  text-align:left; padding:8px 10px 6px; border-bottom:1px solid var(--line)}
+td{padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top}
+td.amt,th.amt{text-align:right}
+td .cat{display:inline-block; width:84px; text-align:center; font-size:11.5px; font-weight:600;
+  color:var(--accent); background:var(--accent-soft); padding:2px 6px; border-radius:999px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; box-sizing:border-box}
+td .cat.in{color:var(--good); background:var(--good-soft)}
+td .cat.mort{color:var(--ink); background:var(--chip)}
+tr.income td{background:var(--good-soft)}
+tr.income td .cat{background:var(--surface)}
+td.amt.warn{color:var(--warn); font-weight:600}
+tr.netrow td{font-size:15.5px; border-top:2px solid var(--line)}
+.automark{display:inline-block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.6px;
+  color:var(--muted); border:1px solid var(--line); border-radius:999px; padding:0 6px; margin-top:3px}
+.catfilter{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:6px 0 4px; font-size:12.5px; color:var(--muted)}
+.cf{font:inherit; font-size:11.5px; font-weight:600; border:1px dashed var(--line); background:var(--surface);
+  color:var(--muted); border-radius:999px; padding:2px 9px; cursor:pointer; text-decoration:line-through}
+.cf.on{border-style:solid; border-color:transparent; background:var(--accent-soft); color:var(--accent); text-decoration:none}
+.cf.on.in{background:var(--good-soft); color:var(--good)}
+.cf.on.mort{background:var(--chip); color:var(--ink)}
+.cf.all{text-decoration:none; border-style:solid}
+.cf:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+td button.del{background:none; border:0; color:var(--muted); cursor:pointer; font:inherit; padding:2px 6px; border-radius:5px}
+td button.del.arm{color:#fff; background:var(--bad)}
+td.amt.out{color:var(--bad); font-weight:600}
+td.amt.gain{color:var(--good); font-weight:600}
+tr.refund td{background:var(--good-soft)}
+tr.refund td .cat{color:var(--good); background:var(--surface)}
+tr.proj td{color:var(--muted)}
+tr.proj td.amt.out{color:var(--warn); opacity:1}
+tr.proj .cat{opacity:.7}
+.projmark{display:inline-block; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.6px;
+  color:var(--muted); border:1px dashed var(--muted); border-radius:999px; padding:0 6px; margin-top:3px}
+td button.edit{background:none; border:0; color:var(--muted); cursor:pointer; font:inherit; padding:2px 6px; border-radius:5px}
+td button.edit:hover, td button.del:hover{color:var(--accent)}
+tr.editing td{background:var(--accent-soft)}
+tr.editrow td{vertical-align:middle; padding:6px 6px}
+tr.editrow input, tr.editrow select{font:inherit; font-size:13px; color:var(--ink); background:var(--surface);
+  border:1px solid var(--accent); border-radius:6px; padding:5px 7px; width:100%; min-width:0; box-sizing:border-box}
+tr.editrow input[type=date]{min-width:136px}
+tr.editrow select{min-width:110px}
+tr.editrow td.amt input{text-align:right; min-width:96px}
+tr.editrow button{margin-left:4px}
+.btns{display:flex; gap:6px}
+.btns button{flex:none}
+button.cancelbtn{font:inherit; font-weight:600; background:var(--chip); color:var(--ink);
+  border:1px solid var(--line); border-radius:7px; padding:8px 12px; cursor:pointer}
+#toast{position:fixed; left:50%; transform:translateX(-50%);
+  bottom:calc(16px + env(safe-area-inset-bottom, 0px));
+  background:var(--ink); color:var(--ground); border-radius:10px; padding:10px 14px;
+  display:flex; gap:12px; align-items:center; box-shadow:0 6px 20px rgba(0,0,0,.25);
+  z-index:50; font-size:14px; max-width:calc(100vw - 32px)}
+#toast span{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+#toast button{font:inherit; border:0; cursor:pointer; border-radius:6px; padding:4px 10px; flex:none}
+#toast-undo{background:var(--accent); color:#fff; font-weight:700}
+#toast-x{background:none; color:var(--ground); opacity:.7}
+#toast[hidden]{display:none}
+tfoot td{font-weight:700; border-bottom:0}
+.catrows{display:flex; flex-direction:column; gap:6px; margin-top:10px}
+.catrow{display:grid; grid-template-columns:170px 1fr 110px; gap:10px; align-items:center; font-size:13.5px}
+@media (max-width:520px){.catrow{grid-template-columns:120px 1fr 100px}}
+.catrow .amt{text-align:right; font-weight:600}
+.note{color:var(--muted); font-size:12.5px}
+header{position:relative}
+.modebar{float:right; display:flex; gap:0; border:1px solid var(--line); border-radius:999px; overflow:hidden; margin:0 0 8px 12px}
+.modebtn{font:inherit; font-size:13px; font-weight:700; background:var(--surface); color:var(--muted);
+  border:0; padding:6px 14px; cursor:pointer}
+.modebtn.on{background:var(--accent); color:#fff}
+.modebtn:focus-visible{outline:2px solid var(--accent); outline-offset:-2px}
+.wrap.simple > *:not(header):not(#ledgercard):not(#offline){display:none !important}
+.rcpt{margin-top:18px; border-top:1px dashed var(--line); padding-top:12px}
+.rcpt-h{font-family:"Barlow Semi Condensed","Public Sans",sans-serif; font-size:15px; font-weight:700;
+  text-transform:uppercase; letter-spacing:.7px; color:var(--muted); margin:0 0 6px}
+.rcpt-h span{text-transform:none; letter-spacing:0; font-family:"Public Sans",sans-serif; font-weight:500; font-size:12.5px}
+.rcpt td.amt{color:var(--muted)}
+.offline{display:none; background:var(--accent-soft); color:var(--accent); border-radius:8px; padding:10px 12px; font-size:13.5px}
+#chartbox{position:relative; margin-top:6px}
+#chart{display:block; width:100%}
+#tip{position:absolute; pointer-events:none; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:8px 11px; font-size:12.5px; box-shadow:0 4px 14px rgba(0,0,0,.15);
+  display:none; min-width:170px; z-index:2}
+#tip .t-month{font-weight:700; margin-bottom:3px}
+#tip .t-row{display:flex; justify-content:space-between; gap:14px; color:var(--muted)}
+#tip .t-tot{display:flex; justify-content:space-between; gap:14px; font-weight:700; border-top:1px solid var(--line); margin-top:4px; padding-top:3px}
+#eqchart{display:block; width:100%}
+#eqtip{position:absolute; pointer-events:none; background:var(--surface); border:1px solid var(--line);
+  border-radius:8px; padding:8px 11px; font-size:12.5px; box-shadow:0 4px 14px rgba(0,0,0,.15);
+  display:none; min-width:190px; z-index:2}
+.eqchip{display:flex; align-items:center; font:inherit; font-size:12.5px; color:var(--muted);
+  background:none; border:0; padding:2px 4px; cursor:pointer}
+.eqchip.off{opacity:.35; text-decoration:line-through}
+.legend{display:flex; flex-wrap:wrap; gap:18px; font-size:12.5px; color:var(--muted); margin-top:8px}
+.legend .sw{display:inline-block; width:20px; height:0; border-top:3px solid var(--accent); margin-right:6px; vertical-align:middle; border-radius:2px}
+.legend .sw.proj{border-top-style:dashed}
+.chartctl{display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; margin-top:10px;
+  font-size:12.5px; color:var(--muted)}
+.chartctl label{display:flex; align-items:center; gap:5px}
+.chartctl input{font:inherit; font-size:12.5px; color:var(--ink); background:var(--ground);
+  border:1px solid var(--line); border-radius:6px; padding:4px 7px; width:100px}
+.chartctl input[type="month"]{width:135px}
+.scbtn{font:inherit; font-size:12.5px; font-weight:700; background:var(--chip); color:var(--muted);
+  border:1px solid var(--line); border-radius:999px; padding:4px 12px; cursor:pointer}
+.scbtn.on{background:var(--accent); border-color:var(--accent); color:#fff}
+.chartctl[hidden]{display:none}
+td button.pay{background:var(--good-soft); color:var(--good); border:0; border-radius:6px;
+  padding:3px 9px; font:inherit; font-size:12.5px; font-weight:700; cursor:pointer; white-space:nowrap}
+
+/* ledger cleanup: one font size, compact dates, wider page */
+.wrap{max-width:1180px}
+#ledgercard, #ledgercard table, #ledgercard th, #ledgercard td, #ledgercard .cat, #ledgercard .cf,
+#ledgercard .catfilter, #ledgercard .catrow, #ledgercard .note, #ledgercard .rcpt-h, #ledgercard .rcpt-h span,
+#ledgercard .projmark, #ledgercard .automark, #ledgercard form.add input, #ledgercard form.add select,
+#ledgercard form.add button, #ledgercard button.cancelbtn, #ledgercard td button, #ledgercard tr.editrow input,
+#ledgercard tr.editrow select, #ledgercard tr.netrow td{font-size:13px; letter-spacing:0}
+#ledgercard th{text-transform:none; font-weight:700}
+#ledgercard .rcpt-h{text-transform:none; font-family:inherit}
+#ledgercard td{padding:6px 10px; vertical-align:middle}
+#ledgercard td:first-child, #ledgercard th:first-child{white-space:nowrap; width:1%}
+#ledgercard td.amt{white-space:nowrap}
+#ledgercard .projmark, #ledgercard .automark{font-weight:600; text-transform:none; margin-left:6px; padding:0 6px}
+#ledgercard .catrow{grid-template-columns:140px 1fr 110px}
+#ledgercard td:nth-child(2), #ledgercard th:nth-child(2){width:1%; white-space:nowrap}
+#ledgercard .rcpt td:nth-child(2), #ledgercard .rcpt th:nth-child(2){width:auto; white-space:normal}
+#ledgercard td .cat{vertical-align:middle; line-height:20px}
+.wrap{max-width:1400px}
+.navbar{display:flex;align-items:center;gap:10px;margin-bottom:6px;font-size:14px}
+.navbar a,.navbar button{font:inherit;font-weight:700;color:var(--accent);background:var(--accent-soft);border:0;border-radius:999px;padding:5px 12px;text-decoration:none;cursor:pointer}
+.navbar .sp{flex:1}
+.navbar button{background:none;color:var(--muted)}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>window.DDG_META_DEFAULTS={milestones:{items:[{date:"2026-09-18",done:true,id:"closed",label:"Purchase closed"},{date:"",done:false,id:"plans",label:"Plans drawn for the 6 units"},{date:"",done:false,id:"check",label:"Plan check submitted to city"},{date:"",done:false,id:"permits",label:"Permits ready to issue"},{date:"",done:false,id:"build",label:"Construction start"}]},settings:{propValue:800000,apprRate:5}};</script>
+<script src="ddg.js"></script>
+</head><body data-project="converse-6421" data-name="6421 Converse Ave" data-sub="6 units planned · Los Angeles 90001 · Kings Mortgage $6,661.22/month from 11/01/26">
+
+<div class="wrap">
+  <nav class="navbar"><a href="./">&lsaquo; All projects</a><span class="sp"></span><button type="button" onclick="DDG.signOut()">Sign out</button></nav>
+  <header>
+    <div class="modebar" role="group" aria-label="View">
+      <button type="button" id="mode-simple" class="modebtn">Simple</button>
+      <button type="button" id="mode-adv" class="modebtn">Advanced</button>
+    </div>
+    <span class="pill">6-unit development &middot; R3</span>
+    <h1>6421 Converse Ave, Los Angeles 90001</h1>
+    <div class="sub">Bought <strong>$783,000</strong> (closed 9/16/2026) &middot; live in it, draw plans for 6 units, get permits ready to issue.</div>
+  </header>
+
+  <div id="offline" class="offline">Live ledger isn&rsquo;t available in this view &mdash; the loan numbers below still work, but entries can&rsquo;t be added or shown.</div>
+
+  <section class="tiles">
+    <div class="tile hot">
+      <div class="label">Into it &mdash; net of rent</div>
+      <div class="big num" id="t-in">&mdash;</div>
+      <div class="sub" id="t-in-sub">ledger + mortgage payments made</div>
+    </div>
+    <div class="tile">
+      <div class="label">Owed on the loan</div>
+      <div class="big num" id="t-owed">&mdash;</div>
+      <div class="sub" id="t-owed-sub"></div>
+    </div>
+    <div class="tile">
+      <div class="label">Monthly payment</div>
+      <div class="big num">$6,661.22<span style="font-size:15px;color:var(--muted)">/mo</span></div>
+      <div class="sub num">$5,244.69 principal&nbsp;&amp;&nbsp;interest + $470.18 mortgage ins. + $815.63 taxes + $130.72 insurance</div>
+    </div>
+    <div class="tile">
+      <div class="label">Plans &amp; permits spend</div>
+      <div class="big num" id="t-ent">&mdash;</div>
+      <div class="sub num" id="t-ent-sub">of the $100,000 estimate to reach ready-to-issue permits</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Cash curve &mdash; paid so far vs. what&rsquo;s coming</h2>
+    <div id="chartbox">
+      <svg id="chart" role="img" aria-label="Cumulative cash into the project by month, paid and projected"></svg>
+      <div id="tip"></div>
+    </div>
+    <div class="legend">
+      <span><span class="sw"></span>Paid to date (ledger + mortgage payments)</span>
+      <span><span class="sw proj"></span>Projected (scheduled mortgage + projected costs)</span>
+      <span><span class="sw" style="border-top-color:var(--good)"></span>Rent collected (cumulative)</span>
+      <span><span class="sw proj" style="border-top-color:var(--muted)"></span>Property value</span>
+    </div>
+    <div class="chartctl" id="chartctl" hidden>
+      <span>Scale</span>
+      <button type="button" id="sc-lin" class="scbtn on">Linear</button>
+      <button type="button" id="sc-log" class="scbtn">Log</button>
+      <label>Y min $<input type="number" id="y-min" placeholder="auto"></label>
+      <label>Y max $<input type="number" id="y-max" placeholder="auto"></label>
+      <label>From<input type="month" id="x-min"></label>
+      <label>To<input type="month" id="x-max"></label>
+      <label>Property value $<input type="number" id="pv" step="1000"></label>
+      <label>Appreciation %/yr<input type="number" id="apr" step="0.1" style="width:70px"></label>
+    </div>
+    <p class="note" style="margin:8px 0 0">Each point is total cash into the project through the end of that month. The dashed part assumes $6,661.22/mo mortgage payments continue on schedule and planned costs land in the month you set. Double-click the <strong>Money $</strong> or <strong>Month</strong> axis title to open the scale, axis limits, property value, and appreciation controls.</p>
+  </section>
+
+  <section class="card">
+    <h2>Property equity &mdash; value, debt, what&rsquo;s yours</h2>
+    <div id="eqbox" style="position:relative; margin-top:6px">
+      <svg id="eqchart" role="img" aria-label="Property value split into remaining debt and owner equity over time"></svg>
+      <div id="eqtip"></div>
+    </div>
+    <div class="legend" id="eqtoggles">
+      <button type="button" class="eqchip" data-k="value"><span class="sw" style="border-top-color:var(--ink)"></span>Property value</button>
+      <button type="button" class="eqchip" data-k="debt"><span class="sw" style="border-top-color:var(--bad)"></span>Remaining debt</button>
+      <button type="button" class="eqchip" data-k="equity"><span class="sw" style="border-top-color:var(--good)"></span>Owner equity</button>
+      <button type="button" class="eqchip" data-k="invested"><span class="sw proj" style="border-top-color:var(--accent)"></span>Cumulative invested</button>
+      <button type="button" class="eqchip" data-k="appr"><span class="sw proj" style="border-top-color:#8B6FC9"></span>Appreciation</button>
+    </div>
+    <p class="note" style="margin:8px 0 0">Property value = remaining debt (red area) + owner equity (green area). The value line runs from the purchase price to today&rsquo;s property value, then projects forward at the appreciation rate (dashed) &mdash; both are set in the cash-curve controls (double-click an axis title there). The line in the project color is every dollar invested: ledger costs plus mortgage payments, dashed once projected. Tap a legend chip to turn any layer on or off.</p>
+  </section>
+
+  <div class="cols">
+    <section class="card">
+      <h2>The loan</h2>
+      <dl class="facts num">
+        <dt>Purchase price</dt><dd>$783,000.00</dd>
+        <dt>Loan amount &mdash; Kings Mortgage Services #26086406</dt><dd>$768,817.00</dd>
+        <dt>&hellip;of which upfront mortgage insurance premium, financed in</dt><dd>$13,222.91</dd>
+        <dt>Interest rate, 30-year fixed</dt><dd>7.250%/yr</dd>
+        <dt>Payments run</dt><dd>Nov 1, 2026 &ndash; Oct 1, 2056</dd>
+        <div class="split"></div>
+        <dt>Cash to close (both escrow deposits)</dt><dd>$37,556.48</dd>
+        <dt>Seller credit toward costs</dt><dd>$25,000.00</dd>
+        <dt>Down payment (3.5% of price)</dt><dd>$27,405.00</dd>
+        <div class="split"></div>
+        <dt>Principal paid to date</dt><dd id="f-prin">$0.00</dd>
+        <dt>Interest paid to date</dt><dd id="f-int">$0.00</dd>
+      </dl>
+      <p class="note">Loan balance assumes every payment lands on schedule starting Nov 1, 2026. The $470.18/mo mortgage insurance stays for the life of this loan (3.5% down) &mdash; it only goes away with a refinance.</p>
+    </section>
+
+    <section class="card">
+      <h2>Where the project is</h2>
+      <div class="ms" id="ms"></div>
+      <p class="hint" style="margin:8px 0 0">Tap a step to mark it done (tap again to undo). It stamps today&rsquo;s date.</p>
+      <div class="budget">
+        <div style="display:flex; justify-content:space-between; font-size:13.5px">
+          <span class="note">Entitlement budget used</span><strong class="num" id="b-pct">0%</strong>
+        </div>
+        <div class="bar"><i id="b-bar" style="width:0%"></i></div>
+      </div>
+    </section>
+  </div>
+
+  <section class="card" id="ledgercard">
+    <h2>Cost ledger &mdash; every dollar in and out</h2>
+    <form class="add" id="add">
+      <input type="date" id="a-date" required aria-label="Date">
+      <select id="a-kind" aria-label="Posted or projected">
+        <option>Posted</option>
+        <option>Projected</option>
+      </select>
+      <select id="a-cat" aria-label="Category">
+        <optgroup label="Money out">
+          <option>Escrow</option>
+          <option>Materials</option>
+          <option>Labor</option>
+          <option>Plans</option>
+          <option>Permits</option>
+          <option>Repairs</option>
+          <option>Utilities</option>
+          <option>Insurance</option>
+          <option>Other</option>
+        </optgroup>
+        <optgroup label="Money in">
+          <option>Rent</option>
+          <option>Refund</option>
+        </optgroup>
+      </select>
+      <input type="text" id="a-desc" placeholder="Description" required aria-label="Description">
+      <input type="number" id="a-amt" step="0.01" min="0.01" placeholder="Amount $" required aria-label="Amount in dollars">
+      <div class="btns"><button type="submit" id="a-btn">Add</button><button type="button" class="cancelbtn" id="a-cancel" hidden>Cancel</button></div>
+    </form>
+    <div class="catfilter" id="catfilter"></div>
+    <div class="tablebox">
+      <table>
+        <thead><tr><th>Date</th><th>Category</th><th>Description</th><th class="amt">Amount</th><th></th></tr></thead>
+        <tbody id="rows"><tr><td colspan="5" class="note">Loading entries&hellip;</td></tr></tbody>
+        <tfoot>
+          <tr><td colspan="3">Money out (paid)</td><td class="amt num out" id="ledger-total">&mdash;</td><td></td></tr>
+          <tr><td colspan="3">Money in (rent + refunds)</td><td class="amt num gain" id="ledger-in">&mdash;</td><td></td></tr>
+          <tr class="netrow"><td colspan="3">Net cash into the project</td><td class="amt num" id="ledger-net">&mdash;</td><td></td></tr>
+          <tr><td colspan="3">Projected &mdash; still to pay</td><td class="amt num warn" id="planned-total">&mdash;</td><td></td></tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="catrows" id="cats"></div>
+    <div class="rcpt">
+      <h3 class="rcpt-h">Receipts &mdash; what Dad&rsquo;s cash bought <span>(already inside the cash entries above, not counted again)</span></h3>
+      <div class="tablebox">
+        <table>
+          <thead><tr><th>Date</th><th>Description</th><th class="amt">Amount</th></tr></thead>
+          <tbody id="rcrows"></tbody>
+          <tfoot>
+            <tr><td colspan="2">Receipts total</td><td class="amt num" id="rc-total">&mdash;</td></tr>
+            <tr><td colspan="2">Cash given to Dad for materials (the &ldquo;Dad&rdquo; entries under Materials)</td><td class="amt num" id="rc-cash">&mdash;</td></tr>
+            <tr><td colspan="2">Cash not covered by a receipt</td><td class="amt num" id="rc-diff">&mdash;</td></tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+    <p class="note" style="margin-top:10px">Red = money out. Green = money in (rent, refunds). Yellow rows marked <strong>projected</strong> aren&rsquo;t paid yet &mdash; tap ✎ to move the date, or <strong>Paid</strong> when the money goes out. Mortgage payments show up automatically on their due date, so don&rsquo;t enter them by hand. Tap the <strong>Show</strong> chips to hide or show a category; the totals follow what&rsquo;s shown.</p>
+  </section>
+
+  <section class="card">
+    <h2>Rent collected &mdash; money coming back</h2>
+    <form class="add" id="radd">
+      <input type="date" id="r-date" required aria-label="Date received">
+      <input type="text" id="r-unit" placeholder="Unit / tenant" required aria-label="Unit or tenant">
+      <input type="text" id="r-desc" placeholder="Note (e.g. Oct rent)" aria-label="Note">
+      <input type="number" id="r-amt" step="0.01" min="0.01" placeholder="Amount $" required aria-label="Amount in dollars">
+      <div class="btns"><button type="submit" id="r-btn">Add</button><button type="button" class="cancelbtn" id="r-cancel" hidden>Cancel</button></div>
+    </form>
+    <div class="tablebox">
+      <table>
+        <thead><tr><th>Date</th><th>Unit / tenant</th><th>Note</th><th class="amt">Amount</th><th></th></tr></thead>
+        <tbody id="rrows"><tr><td colspan="5" class="note">Loading&hellip;</td></tr></tbody>
+        <tfoot><tr><td colspan="3">Total rent collected (subtracted from &ldquo;into it&rdquo;)</td><td class="amt num" id="rent-total">&mdash;</td><td></td></tr></tfoot>
+      </table>
+    </div>
+    <p class="note" style="margin-top:10px">Every dollar of rent that comes in gets logged here &mdash; it lowers the &ldquo;into it&rdquo; number and draws the green line on the cash curve. Once the 6 units are built this becomes the income side of the project.</p>
+  </section>
+
+</div>
+
+<div id="toast" hidden>
+  <span id="toast-msg"></span>
+  <button type="button" id="toast-undo">Undo</button>
+  <button type="button" id="toast-x" aria-label="Dismiss">&times;</button>
+</div>
+
+<script>
+"use strict";
+// ---- fixed loan facts (from the 9/14/2026 settlement statement + payment letter) ----
+var L0 = 768817.00;          // loan amount, dollars
+var RATE_M = 0.0725 / 12;    // monthly interest rate
+var PI = 5244.69;            // principal & interest, dollars per month
+var PMT = 6661.22;           // total monthly payment incl. reserves, dollars per month
+var FIRST = new Date(2026, 10, 1); // Nov 1, 2026
+var N_MAX = 360;
+var EQ_PURCHASE_KEY = "2026-09", EQ_PURCHASE_PRICE = 783000, EQ_REVERSE = false; // bought Sep 2026, dollars
+var ENT_BUDGET = 100000;     // Frank's estimate to reach ready-to-issue permits, dollars
+var ENT_CATS = { "Plans & design": 1, "Permits & fees": 1, "Plans & permits": 1, "Plans": 1, "Permits": 1 };
+
+function money(n){ return n.toLocaleString("en-US", {style:"currency", currency:"USD"}); }
+function balAfter(n){
+  if (n <= 0) return L0;
+  var f = Math.pow(1 + RATE_M, n);
+  return Math.max(0, L0 * f - PI * (f - 1) / RATE_M);
+}
+function paymentsMade(){
+  var now = new Date(), n = 0;
+  for (var k = 1; k <= N_MAX; k++){
+    var d = new Date(FIRST.getFullYear(), FIRST.getMonth() + (k - 1), 1);
+    if (d <= now) n = k; else break;
+  }
+  return n;
+}
+
+var state = { ledger: [], planned: [], rent: [], milestones: null, db: null, editCost: null, editPlan: null, editRent: null,
+  settings: { scale: "lin", yMin: null, yMax: null, xMin: null, xMax: null },
+  propValue: 800000 }; // appraised value, dollars, Sep 2026 appraisal
+state.eqShow = { value: true, debt: true, equity: true, invested: true, appr: false };
+var FALLBACK = {"costs": [], "planned": [], "rent": [], "receipts": [], "milestones": window.DDG_META_DEFAULTS.milestones};
+var usingFallback = false;
+state.receipts = FALLBACK.receipts.slice();
+function renderReceipts(){
+  var rows = el("rcrows"); if (!rows) return;
+  rows.innerHTML = "";
+  var tot = 0;
+  state.receipts.slice().sort(function(a, b){ return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; }).forEach(function(r){
+    tot += r.amt;
+    var tr = document.createElement("tr");
+    var d = document.createElement("td"); d.className = "num"; d.textContent = fmtDate(r.date); tr.appendChild(d);
+    var w = document.createElement("td"); w.textContent = r.desc; tr.appendChild(w);
+    var a = document.createElement("td"); a.className = "amt num"; a.textContent = money(r.amt); tr.appendChild(a);
+    rows.appendChild(tr);
+  });
+  if (!state.receipts.length) rows.innerHTML = '<tr><td colspan="3" class="note">No receipts logged.</td></tr>';
+  var cash = state.ledger.reduce(function(s2, e){ return s2 + (/^Dad\b/.test(e.desc || "") && e.cat === "Materials" ? e.amt : 0); }, 0);
+  el("rc-total").textContent = money(tot);
+  el("rc-cash").textContent = money(cash);
+  el("rc-diff").textContent = money(cash - tot);
+}
+function showFallbackNote(){
+  usingFallback = true;
+  var o = el("offline");
+  o.textContent = "Couldn\u2019t reach the database \u2014 refresh the page. Your data is safe.";
+  o.style.display = "block";
+}
+function fbApply(){
+  if (!state.ledger.length && FALLBACK.costs.length) state.ledger = FALLBACK.costs.slice();
+  if (!state.planned.length && FALLBACK.planned.length) state.planned = FALLBACK.planned.slice();
+  if (!state.milestones) state.milestones = FALLBACK.milestones;
+  showFallbackNote();
+  renderLedger();
+  renderRent();
+  renderMilestones();
+  buildChart();
+}
+
+state.apprRate = 5.0; // %/yr projected appreciation (editable on the page)
+
+function monthLabel(mo){
+  var p = String(mo || "").split("-");
+  var names = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  return (names[(+p[1] || 1) - 1] || "?") + " " + (p[0] || "");
+}
+
+var lastUndo = null, toastTimer = null;
+function hideToast(){ el("toast").hidden = true; }
+function pushUndo(label, fn){
+  lastUndo = fn;
+  el("toast-msg").textContent = label;
+  el("toast").hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(hideToast, 8000);
+}
+
+function rentTotal(){
+  return state.rent.reduce(function(s, r){ return s + r.amt; }, 0);
+}
+function startEditRent(e){
+  state.editRent = e.id;
+  el("r-date").value = e.date;
+  el("r-unit").value = e.unit;
+  el("r-desc").value = e.desc;
+  el("r-amt").value = e.amt;
+  el("r-btn").textContent = "Save";
+  el("r-cancel").hidden = false;
+  renderRent();
+  el("radd").scrollIntoView({ behavior: "smooth", block: "center" });
+}
+function clearEditRent(){
+  state.editRent = null;
+  el("r-btn").textContent = "Add";
+  el("r-cancel").hidden = true;
+  el("r-unit").value = ""; el("r-desc").value = ""; el("r-amt").value = "";
+  el("r-date").value = new Date().toISOString().slice(0, 10);
+  renderRent();
+}
+function renderRent(){
+  var rows = el("rrows");
+  rows.innerHTML = "";
+  if (!state.rent.length){
+    rows.innerHTML = '<tr><td colspan="5" class="note">No rent logged yet. When money comes in, add it here.</td></tr>';
+  }
+  state.rent.forEach(function(e){
+    var tr = document.createElement("tr");
+    if (state.editRent === e.id) tr.className = "editing";
+    var d = document.createElement("td"); d.className = "num"; d.textContent = e.date; tr.appendChild(d);
+    var u = document.createElement("td"); u.textContent = e.unit; tr.appendChild(u);
+    var w = document.createElement("td"); w.textContent = e.desc; tr.appendChild(w);
+    var a = document.createElement("td"); a.className = "amt num"; a.style.color = "var(--good)"; a.textContent = money(e.amt); tr.appendChild(a);
+    var x = document.createElement("td");
+    if (state.db){
+      var eb = document.createElement("button");
+      eb.className = "edit"; eb.type = "button"; eb.textContent = "✎";
+      eb.setAttribute("aria-label", "Edit rent entry");
+      eb.addEventListener("click", function(){ startEditRent(e); });
+      x.appendChild(eb);
+      var b = document.createElement("button");
+      b.className = "del"; b.type = "button"; b.textContent = "×";
+      b.setAttribute("aria-label", "Delete rent entry");
+      b.addEventListener("click", function(){
+        if (!b.classList.contains("arm")){
+          b.classList.add("arm"); b.textContent = "sure?";
+          setTimeout(function(){ b.classList.remove("arm"); b.textContent = "×"; }, 2500);
+          return;
+        }
+        if (state.editRent === e.id) clearEditRent();
+        state.db.collection("rent").doc(e.id).delete().then(function(){
+          pushUndo("Deleted rent “" + (e.unit || e.desc) + "”", function(){
+            state.db.collection("rent").doc(e.id).set({ date: e.date, unit: e.unit, desc: e.desc, amt: e.amt, ts: Date.now() }).catch(function(){});
+          });
+        }).catch(function(){});
+      });
+      x.appendChild(b);
+    }
+    tr.appendChild(x);
+    rows.appendChild(tr);
+  });
+  el("rent-total").textContent = money(rentTotal());
+}
+
+var IN_CATS = { "Rent": 1, "Refund": 1 };
+var CAT_ORDER = ["Escrow", "Materials", "Labor", "Plans", "Permits", "Repairs",
+  "Utilities", "Insurance", "Other", "Mortgage", "Rent", "Refund"];
+var MONTHS_FULL = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+function fmtDate(iso){
+  var p = String(iso || "").split("-");
+  if (p.length < 2 || !p[0]) return String(iso || "");
+  if (!p[2]) return p[1] + "/" + p[0].slice(2);
+  return p[1] + "/" + p[2].slice(0, 2) + "/" + p[0].slice(2);
+}
+function isoOf(d){ return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+function setCat(v){
+  var sel = el("a-cat");
+  var found = Array.prototype.some.call(sel.options, function(o){ return o.value === v; });
+  if (!found && v){ var o = document.createElement("option"); o.textContent = v; sel.appendChild(o); }
+  sel.value = v;
+}
+function syncDescHint(){
+  el("a-desc").placeholder = el("a-cat").value === "Rent" ? "Tenant name" : "Description";
+}
+state.edit = null;
+state.hiddenCats = {};
+try { state.hiddenCats = JSON.parse(localStorage.getItem("hiddenCats") || "{}") || {}; } catch (err) {}
+function startEdit(row){
+  var e = row.e;
+  var raw;
+  if (row.store === "rent") raw = { date: e.date, unit: e.unit, desc: e.desc, amt: e.amt };
+  else if (row.store === "planned") raw = { month: e.month, date: e.date || "", cat: e.cat, desc: e.desc, amt: e.amt };
+  else raw = { date: e.date, cat: e.cat, desc: e.desc, amt: e.amt };
+  state.edit = { store: row.store, id: e.id, raw: raw, busy: false, draft: {
+    date: row.store === "planned" ? (e.date || (e.month + "-01")) : e.date,
+    cat: row.store === "rent" ? "Rent" : e.cat,
+    desc: row.store === "rent" ? e.unit : e.desc,
+    amt: Math.abs(e.amt)
+  } };
+  renderLedger();
+  setTimeout(function(){
+    var f = document.querySelector("tr.editrow input[type=text]");
+    if (f){ f.focus(); f.select(); }
+  }, 0);
+}
+function clearEditCost(){
+  state.edit = null;
+  renderLedger();
+}
+var clearEditPlan = clearEditCost;
+
+function buildEditRow(row){
+  var d = state.edit.draft;
+  var tr = document.createElement("tr");
+  tr.className = "editing editrow" + (row.store === "planned" ? " proj" : "");
+  function cell(node, cls){ var td = document.createElement("td"); if (cls) td.className = cls; td.appendChild(node); tr.appendChild(td); return td; }
+
+  var di = document.createElement("input");
+  di.type = "date"; di.value = d.date; di.setAttribute("aria-label", "Date");
+  di.addEventListener("input", function(){ d.date = di.value; });
+  cell(di);
+
+  var cs = el("a-cat").cloneNode(true);
+  cs.removeAttribute("id"); cs.setAttribute("aria-label", "Category");
+  var has = Array.prototype.some.call(cs.options, function(o){ return o.value === d.cat; });
+  if (!has && d.cat){ var o = document.createElement("option"); o.textContent = d.cat; cs.appendChild(o); }
+  cs.value = d.cat;
+  cell(cs);
+
+  var ti = document.createElement("input");
+  ti.type = "text"; ti.value = d.desc; ti.setAttribute("aria-label", "Description");
+  ti.placeholder = d.cat === "Rent" ? "Tenant name" : "Description";
+  ti.addEventListener("input", function(){ d.desc = ti.value; });
+  cs.addEventListener("change", function(){ d.cat = cs.value; ti.placeholder = d.cat === "Rent" ? "Tenant name" : "Description"; });
+  cell(ti);
+
+  var ai = document.createElement("input");
+  ai.type = "number"; ai.step = "0.01"; ai.min = "0.01"; ai.value = d.amt; ai.setAttribute("aria-label", "Amount in dollars");
+  ai.addEventListener("input", function(){ d.amt = ai.value; });
+  cell(ai, "amt");
+
+  var box = document.createElement("span"); box.style.whiteSpace = "nowrap";
+  var sv = document.createElement("button"); sv.type = "button"; sv.className = "pay"; sv.textContent = "Save";
+  var cn = document.createElement("button"); cn.type = "button"; cn.className = "del"; cn.textContent = "Cancel";
+  sv.addEventListener("click", function(){ commitEdit(sv); });
+  cn.addEventListener("click", clearEditCost);
+  box.appendChild(sv); box.appendChild(cn);
+  cell(box);
+
+  tr.addEventListener("keydown", function(ev){
+    if (ev.key === "Enter"){ ev.preventDefault(); commitEdit(sv); }
+    else if (ev.key === "Escape"){ ev.preventDefault(); clearEditCost(); }
+  });
+  return tr;
+}
+
+function commitEdit(btn){
+  var ed = state.edit;
+  if (!ed || ed.busy || !state.db) return;
+  var d = ed.draft;
+  var amt = parseFloat(d.amt);
+  if (!(amt > 0) || !d.date) return;
+  var cat = d.cat;
+  var a2 = Math.round(amt * 100) / 100;
+  var desc = String(d.desc || "").trim();
+  var target = cat === "Rent" ? "rent" : (ed.store === "planned" && !IN_CATS[cat] ? "planned" : "costs");
+  var body;
+  if (target === "rent") body = { date: d.date, unit: desc, desc: (ed.store === "rent" ? (ed.raw.desc || "") : ""), amt: a2, ts: Date.now() };
+  else if (target === "planned") body = { month: d.date.slice(0, 7), date: d.date, cat: cat, desc: desc, amt: a2, ts: Date.now() };
+  else body = { date: d.date, cat: cat, desc: desc, amt: cat === "Refund" ? -a2 : a2, ts: Date.now() };
+  ed.busy = true; if (btn) btn.disabled = true;
+  var op = ed.store === target
+    ? state.db.collection(target).doc(ed.id).set(body).then(function(){ return null; })
+    : state.db.collection(target).add(body).then(function(ref){
+        return state.db.collection(ed.store).doc(ed.id).delete().then(function(){ return ref; });
+      });
+  op.then(function(ref){
+    var prevRaw = Object.assign({}, ed.raw, { ts: Date.now() });
+    pushUndo("Edited “" + (desc || cat) + "”", function(){
+      if (ref) ref.delete().catch(function(){});
+      state.db.collection(ed.store).doc(ed.id).set(prevRaw).catch(function(){});
+    });
+    if (state.edit === ed) state.edit = null;
+    renderLedger();
+  }).catch(function(){
+    ed.busy = false; if (btn) btn.disabled = false;
+  });
+}
+function startEditCost(e){ startEdit({ store: "costs", e: e }); }
+
+function el(id){ return document.getElementById(id); }
+
+function renderLoan(){
+  var n = paymentsMade();
+  var bal = balAfter(n);
+  var prin = L0 - bal;
+  var interest = n * PI - prin;
+  var carry = n * PMT;
+  el("t-owed").textContent = money(bal);
+  el("t-owed-sub").textContent = n === 0
+    ? "first payment due Nov 1, 2026"
+    : n + " of 360 payments made, on schedule";
+  el("f-prin").textContent = money(prin);
+  el("f-int").textContent = money(interest);
+  return carry;
+}
+
+function ledgerRows(){
+  var rows = [];
+  state.ledger.forEach(function(e){
+    rows.push({ kind: "post", store: "costs", sort: e.date, date: e.date, cat: e.cat, desc: e.desc, out: e.amt >= 0, amt: Math.abs(e.amt), e: e });
+  });
+  state.planned.forEach(function(p){
+    rows.push({ kind: "proj", store: "planned", sort: p.date || (p.month + "-15"), date: p.date || p.month, cat: p.cat, desc: p.desc, out: true, amt: p.amt, e: p });
+  });
+  state.rent.forEach(function(r){
+    rows.push({ kind: "post", store: "rent", sort: r.date, date: r.date, cat: "Rent",
+      desc: "Rent — " + (r.unit || "tenant") + (r.desc ? " (" + r.desc + ")" : ""), out: false, amt: r.amt, e: r });
+  });
+  var made = paymentsMade();
+  for (var k = 1; k <= made; k++){
+    var pd = new Date(FIRST.getFullYear(), FIRST.getMonth() + (k - 1), 1);
+    rows.push({ kind: "auto", store: null, sort: isoOf(pd), date: isoOf(pd), cat: "Mortgage",
+      desc: "Mortgage payment " + k + " of 360 — Kings Mortgage", out: true, amt: PMT });
+  }
+  if (made < 360){
+    var nd = new Date(FIRST.getFullYear(), FIRST.getMonth() + made, 1);
+    rows.push({ kind: "projauto", store: null, sort: isoOf(nd), date: isoOf(nd), cat: "Mortgage",
+      desc: "Next mortgage payment (" + (made + 1) + " of 360) — Kings Mortgage", out: true, amt: PMT });
+  }
+  rows.sort(function(a, b){ return a.sort < b.sort ? 1 : a.sort > b.sort ? -1 : 0; });
+  return rows;
+}
+
+function renderCatFilter(rows){
+  var box = el("catfilter"); if (!box) return;
+  box.innerHTML = "";
+  var present = {};
+  rows.forEach(function(r){ present[r.cat] = 1; });
+  var cats = CAT_ORDER.filter(function(c){ return present[c]; })
+    .concat(Object.keys(present).filter(function(c){ return CAT_ORDER.indexOf(c) < 0; }));
+  var lab = document.createElement("span"); lab.textContent = "Show:"; box.appendChild(lab);
+  var all = document.createElement("button");
+  all.type = "button"; all.className = "cf all"; all.textContent = "All";
+  all.addEventListener("click", function(){
+    state.hiddenCats = {};
+    try { localStorage.setItem("hiddenCats", "{}"); } catch (err) {}
+    renderLedger();
+  });
+  box.appendChild(all);
+  cats.forEach(function(c){
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "cf" + (state.hiddenCats[c] ? "" : " on") + (IN_CATS[c] ? " in" : "") + (c === "Mortgage" ? " mort" : "");
+    b.textContent = c;
+    b.setAttribute("aria-pressed", state.hiddenCats[c] ? "false" : "true");
+    b.addEventListener("click", function(){
+      if (state.hiddenCats[c]) delete state.hiddenCats[c]; else state.hiddenCats[c] = 1;
+      try { localStorage.setItem("hiddenCats", JSON.stringify(state.hiddenCats)); } catch (err) {}
+      renderLedger();
+    });
+    box.appendChild(b);
+  });
+}
+
+function rawOf(row){
+  var e = row.e;
+  if (row.store === "rent") return { date: e.date, unit: e.unit, desc: e.desc, amt: e.amt, ts: Date.now() };
+  if (row.store === "planned") return { month: e.month, date: e.date || "", cat: e.cat, desc: e.desc, amt: e.amt, ts: Date.now() };
+  return { date: e.date, cat: e.cat, desc: e.desc, amt: e.amt, ts: Date.now() };
+}
+
+function renderLedger(){
+  var carry = renderLoan();
+  var total = 0, entTotal = 0;
+  state.ledger.forEach(function(e){
+    total += e.amt;
+    if (ENT_CATS[e.cat]) entTotal += e.amt;
+  });
+
+  var all = ledgerRows();
+  renderCatFilter(all);
+  var vis = all.filter(function(r){ return !state.hiddenCats[r.cat]; });
+
+  var outT = 0, inT = 0, projT = 0, catTotals = {};
+  var rowsEl = el("rows");
+  rowsEl.innerHTML = "";
+  if (!vis.length){
+    rowsEl.innerHTML = '<tr><td colspan="5" class="note">' + (all.length ? "Nothing to show — every category is hidden. Tap All." : "No entries yet.") + '</td></tr>';
+  }
+  vis.forEach(function(row){
+    var e = row.e;
+    var isProj = row.kind === "proj" || row.kind === "projauto";
+    if (isProj) projT += row.amt;
+    else if (row.out){ outT += row.amt; catTotals[row.cat] = (catTotals[row.cat] || 0) + row.amt; }
+    else inT += row.amt;
+
+    if (state.edit && row.store && state.edit.store === row.store && e && state.edit.id === e.id){
+      rowsEl.appendChild(buildEditRow(row));
+      return;
+    }
+
+    var tr = document.createElement("tr");
+    var cls = [];
+    if (isProj) cls.push("proj");
+    if (!row.out) cls.push("income");
+    if (state.edit && row.store && state.edit.store === row.store && e && state.edit.id === e.id) cls.push("editing");
+    tr.className = cls.join(" ");
+
+    var d = document.createElement("td"); d.className = "num";
+    d.appendChild(document.createTextNode(fmtDate(row.date)));
+    if (isProj || row.kind === "auto"){
+      var pm = document.createElement("span");
+      pm.className = isProj ? "projmark" : "automark";
+      pm.textContent = isProj ? "projected" : "automatic";
+      d.appendChild(pm);
+    }
+    tr.appendChild(d);
+
+    var c = document.createElement("td"); var chip = document.createElement("span");
+    chip.className = "cat" + (row.out ? "" : " in") + (row.cat === "Mortgage" ? " mort" : "");
+    chip.textContent = row.cat; chip.title = row.cat;
+    c.appendChild(chip); tr.appendChild(c);
+
+    var w = document.createElement("td"); w.textContent = row.desc; tr.appendChild(w);
+
+    var a = document.createElement("td");
+    a.className = "amt num " + (row.out ? "out" : "gain");
+    a.textContent = (row.out ? "" : "+") + money(row.amt);
+    tr.appendChild(a);
+
+    var x = document.createElement("td"); x.style.whiteSpace = "nowrap";
+    if (state.db && row.store){
+      if (row.store === "planned"){
+        var pb = document.createElement("button");
+        pb.className = "pay"; pb.type = "button"; pb.textContent = "Paid";
+        pb.addEventListener("click", function(){
+          pb.disabled = true;
+          if (state.edit && state.edit.id === e.id) clearEditCost();
+          var paidRef = null;
+          state.db.collection("costs").add({
+            date: isoOf(new Date()), cat: e.cat, desc: e.desc, amt: e.amt, ts: Date.now()
+          }).then(function(ref){
+            paidRef = ref;
+            return state.db.collection("planned").doc(e.id).delete();
+          }).then(function(){
+            pushUndo("Marked “" + (e.desc || e.cat) + "” paid", function(){
+              if (paidRef) paidRef.delete().catch(function(){});
+              state.db.collection("planned").doc(e.id).set(rawOf(row)).catch(function(){});
+            });
+          }).catch(function(){ pb.disabled = false; });
+        });
+        x.appendChild(pb);
+      }
+      var eb = document.createElement("button");
+      eb.className = "edit"; eb.type = "button"; eb.textContent = "✎";
+      eb.setAttribute("aria-label", "Edit entry");
+      eb.addEventListener("click", function(){ startEdit(row); });
+      x.appendChild(eb);
+      var b = document.createElement("button");
+      b.className = "del"; b.type = "button"; b.textContent = "×";
+      b.setAttribute("aria-label", "Delete entry");
+      b.addEventListener("click", function(){
+        if (!b.classList.contains("arm")){
+          b.classList.add("arm"); b.textContent = "sure?";
+          setTimeout(function(){ b.classList.remove("arm"); b.textContent = "×"; }, 2500);
+          return;
+        }
+        if (state.edit && state.edit.id === e.id) clearEditCost();
+        var raw = rawOf(row);
+        state.db.collection(row.store).doc(e.id).delete().then(function(){
+          pushUndo("Deleted “" + row.desc + "”", function(){
+            state.db.collection(row.store).doc(e.id).set(raw).catch(function(){});
+          });
+        }).catch(function(){});
+      });
+      x.appendChild(b);
+    }
+    tr.appendChild(x);
+    rowsEl.appendChild(tr);
+  });
+
+  el("ledger-total").textContent = money(outT);
+  el("ledger-in").textContent = "+" + money(inT);
+  el("ledger-net").textContent = money(outT - inT);
+  el("planned-total").textContent = money(projT);
+  renderReceipts();
+
+  var rent = rentTotal();
+  el("t-in").textContent = money(total + carry - rent);
+  el("t-in-sub").textContent = money(total) + " ledger + " + money(carry) + " mortgage − " + money(rent) + " rent";
+  el("t-ent").textContent = money(entTotal);
+  var pct = Math.min(100, entTotal / ENT_BUDGET * 100);
+  el("b-pct").textContent = pct.toFixed(1) + "% ($" + Math.round(entTotal).toLocaleString("en-US") + " of $100,000)";
+  el("b-bar").style.width = pct + "%";
+
+  var cats = el("cats");
+  cats.innerHTML = "";
+  var names = Object.keys(catTotals).sort(function(a2, b2){ return catTotals[b2] - catTotals[a2]; });
+  var max = names.length ? catTotals[names[0]] : 1;
+  names.forEach(function(name){
+    var row = document.createElement("div"); row.className = "catrow";
+    var lab = document.createElement("span"); lab.textContent = name;
+    var bar = document.createElement("div"); bar.className = "bar"; bar.style.marginTop = "0";
+    var fill = document.createElement("i"); fill.style.width = (catTotals[name] / max * 100) + "%";
+    bar.appendChild(fill);
+    var amt = document.createElement("span"); amt.className = "amt num"; amt.textContent = money(catTotals[name]);
+    row.appendChild(lab); row.appendChild(bar); row.appendChild(amt);
+    cats.appendChild(row);
+  });
+}
+
+// ---- cash curve: cumulative dollars in by month, actual then projected ----
+function buildChart(){
+  var svg = el("chart"), box = el("chartbox");
+  if (!svg || !box) return;
+  var W = Math.max(320, box.clientWidth || 640);
+  var H = 300, padL = 68, padR = 20, padT = 16, padB = 50;
+  var iw = W - padL - padR, ih = H - padT - padB;
+  var now = new Date();
+  var names = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function keyOf(y, m){ return y + "-" + String(m + 1).padStart(2, "0"); }
+  var curKey = keyOf(now.getFullYear(), now.getMonth());
+
+  var endY = now.getFullYear(), endM = now.getMonth() + 14;
+  state.planned.forEach(function(p){
+    var q = p.month.split("-"), py = +q[0], pm = (+q[1] || 1) - 1;
+    if (py * 12 + pm + 2 > endY * 12 + endM){ endY = py; endM = pm + 2; }
+  });
+  var months = [];
+  var y = 2026, m = 7;
+  while (y * 12 + m <= endY * 12 + endM && months.length < 240){
+    months.push({ key: keyOf(y, m), label: names[m] + " ’" + String(y).slice(2), parts: [], cum: 0, rentCum: 0 });
+    m++; if (m > 11){ m = 0; y++; }
+  }
+  var byKey = {};
+  months.forEach(function(mo){ byKey[mo.key] = mo; });
+
+  state.ledger.forEach(function(e){
+    var k = (e.date || "").slice(0, 7);
+    var mo = byKey[k] || byKey[curKey];
+    if (mo){ mo.parts.push({ label: e.desc || e.cat, amt: e.amt, proj: false }); }
+  });
+  for (var k2 = 1; k2 <= N_MAX; k2++){
+    var pd = new Date(FIRST.getFullYear(), FIRST.getMonth() + (k2 - 1), 1);
+    var pk = keyOf(pd.getFullYear(), pd.getMonth());
+    if (!byKey[pk]) break;
+    byKey[pk].parts.push({ label: "Mortgage payment " + k2 + " of " + N_MAX, amt: PMT, proj: pd > now });
+  }
+  state.planned.forEach(function(p){
+    var mo = byKey[p.month] || byKey[curKey];
+    if (mo && p.month < curKey) mo = byKey[curKey];
+    if (mo){ mo.parts.push({ label: p.desc || p.cat, amt: p.amt, proj: true }); }
+  });
+  state.rent.forEach(function(e){
+    var k = (e.date || "").slice(0, 7);
+    var mo = byKey[k] || byKey[curKey];
+    if (mo){ mo.rentAdd = (mo.rentAdd || 0) + e.amt; }
+  });
+
+  var cum = 0, rc = 0;
+  months.forEach(function(mo){
+    mo.add = mo.parts.reduce(function(s, p){ return s + p.amt; }, 0);
+    cum += mo.add; mo.cum = cum;
+    rc += mo.rentAdd || 0; mo.rentCum = rc;
+  });
+
+  // x window (user-picked month limits)
+  var xm = state.settings.xMin, xM = state.settings.xMax;
+  var view = months.filter(function(mo){ return (!xm || mo.key >= xm) && (!xM || mo.key <= xM); });
+  if (view.length < 2) view = months;
+  var splitIdx = -1;
+  view.forEach(function(mo, i){ if (mo.key <= curKey) splitIdx = i; });
+
+  // y scale (linear or log, user-picked limits)
+  var pv = state.propValue || 0;
+  var autoMax = Math.max(pv, 1);
+  view.forEach(function(mo){ autoMax = Math.max(autoMax, mo.cum, mo.rentCum); });
+  var isLog = state.settings.scale === "log";
+  var hi = state.settings.yMax > 0 ? state.settings.yMax : (function(){
+    var niceSteps = [2500, 5000, 10000, 25000, 50000, 100000, 250000, 500000, 1000000, 2500000, 5000000];
+    for (var ns = 0; ns < niceSteps.length; ns++){ if (niceSteps[ns] * 4 >= autoMax) return niceSteps[ns] * 4; }
+    return niceSteps[niceSteps.length - 1] * 4;
+  })();
+  var lo;
+  if (isLog){
+    var minPos = hi;
+    view.forEach(function(mo){
+      if (mo.cum > 0 && mo.cum < minPos) minPos = mo.cum;
+      if (mo.rentCum > 0 && mo.rentCum < minPos) minPos = mo.rentCum;
+    });
+    if (pv > 0 && pv < minPos) minPos = pv;
+    lo = state.settings.yMin > 0 ? state.settings.yMin : Math.pow(10, Math.floor(Math.log(Math.max(minPos, 10)) / Math.LN10));
+    if (!(lo > 0) || lo >= hi) lo = hi / 1000;
+  } else {
+    lo = state.settings.yMin > 0 ? state.settings.yMin : 0;
+    if (lo >= hi) lo = 0;
+  }
+  function Y(v){
+    var t = isLog
+      ? (Math.log(Math.max(v, lo)) - Math.log(lo)) / (Math.log(hi) - Math.log(lo))
+      : (v - lo) / (hi - lo);
+    t = Math.max(0, Math.min(1, t));
+    return padT + ih - t * ih;
+  }
+  function X(i){ return padL + (view.length < 2 ? 0 : i / (view.length - 1) * iw); }
+  function short(v){
+    if (v >= 1e6) return "$" + (v / 1e6).toFixed(v % 1e6 ? 2 : 0) + "M";
+    if (v >= 1e3) return "$" + Math.round(v / 1e3) + "k";
+    return "$" + Math.round(v);
+  }
+  var ticks = [];
+  if (isLog){
+    var seq = [1, 2, 5];
+    for (var ex = Math.floor(Math.log(lo) / Math.LN10); ex <= Math.ceil(Math.log(hi) / Math.LN10) + 1; ex++){
+      for (var si = 0; si < 3; si++){
+        var tv = seq[si] * Math.pow(10, ex);
+        if (tv >= lo * 0.999 && tv <= hi * 1.001) ticks.push(tv);
+      }
+    }
+    while (ticks.length > 7) ticks = ticks.filter(function(_, i2){ return i2 % 2 === 0; });
+    if (ticks.length < 2) ticks = [lo, hi];
+  } else {
+    for (var g = 0; g <= 4; g++) ticks.push(lo + (hi - lo) * g / 4);
+  }
+
+  var css = getComputedStyle(document.documentElement);
+  var cLine = css.getPropertyValue("--line").trim();
+  var cMuted = css.getPropertyValue("--muted").trim();
+  var cAccent = css.getPropertyValue("--accent").trim();
+  var cGood = css.getPropertyValue("--good").trim();
+
+  var s = "";
+  svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+  svg.setAttribute("height", H);
+  ticks.forEach(function(tv2){
+    var gy = Y(tv2);
+    s += '<line x1="' + padL + '" y1="' + gy + '" x2="' + (W - padR) + '" y2="' + gy + '" stroke="' + cLine + '" stroke-width="1"/>';
+    s += '<text x="' + (padL - 8) + '" y="' + (gy + 4) + '" text-anchor="end" font-size="11" fill="' + cMuted + '">' + short(tv2) + "</text>";
+  });
+  var every = Math.max(1, Math.ceil(view.length / 8));
+  view.forEach(function(mo, i){
+    var isLast = i === view.length - 1;
+    if ((i % every === 0 && !isLast && i <= view.length - 1 - every) || isLast){
+      s += '<text x="' + X(i) + '" y="' + (H - 26) + '" text-anchor="' + (isLast ? "end" : "middle") + '" font-size="11" fill="' + cMuted + '">' + mo.label + "</text>";
+    }
+  });
+  var yBase = padT + ih;
+  if (splitIdx >= 0){
+    var actPath = "", area = "M" + X(0) + " " + yBase;
+    for (var i2 = 0; i2 <= splitIdx; i2++){
+      actPath += (i2 ? "L" : "M") + X(i2) + " " + Y(view[i2].cum);
+      area += "L" + X(i2) + " " + Y(view[i2].cum);
+    }
+    area += "L" + X(splitIdx) + " " + yBase + "Z";
+    s += '<path d="' + area + '" fill="' + cAccent + '" opacity="0.12"/>';
+    s += '<path d="' + actPath + '" fill="none" stroke="' + cAccent + '" stroke-width="2.5" stroke-linejoin="round"/>';
+  }
+  var projStart = Math.max(splitIdx, 0), projPath = "";
+  for (var i3 = projStart; i3 < view.length; i3++){
+    projPath += (i3 === projStart ? "M" : "L") + X(i3) + " " + Y(view[i3].cum);
+  }
+  s += '<path d="' + projPath + '" fill="none" stroke="' + cAccent + '" stroke-width="2.5" stroke-dasharray="6 5" opacity="0.85" stroke-linejoin="round"/>';
+  if (rc > 0 && splitIdx >= 0){
+    var rentPath = "";
+    for (var i4 = 0; i4 <= splitIdx; i4++){
+      rentPath += (i4 ? "L" : "M") + X(i4) + " " + Y(view[i4].rentCum);
+    }
+    s += '<path d="' + rentPath + '" fill="none" stroke="' + cGood + '" stroke-width="2.5" stroke-linejoin="round"/>';
+    s += '<circle cx="' + X(splitIdx) + '" cy="' + Y(view[splitIdx].rentCum) + '" r="4" fill="' + cGood + '"/>';
+  }
+  if (pv > 0){
+    var pvy = Y(pv);
+    if (pvy > padT - 1 && pvy < yBase + 1){
+      s += '<line x1="' + padL + '" y1="' + pvy + '" x2="' + (W - padR) + '" y2="' + pvy + '" stroke="' + cMuted + '" stroke-width="1.5" stroke-dasharray="3 4"/>';
+      var pvly = pvy < padT + 16 ? pvy + 14 : pvy - 6;
+      s += '<text x="' + (padL + 6) + '" y="' + pvly + '" font-size="11" font-weight="700" fill="' + cMuted + '">Property value ' + short(pv) + "</text>";
+    }
+  }
+  if (splitIdx >= 0){
+    s += '<line x1="' + X(splitIdx) + '" y1="' + padT + '" x2="' + X(splitIdx) + '" y2="' + yBase + '" stroke="' + cMuted + '" stroke-width="1" stroke-dasharray="2 3"/>';
+    s += '<text x="' + X(splitIdx) + '" y="' + (padT - 4) + '" text-anchor="middle" font-size="10" fill="' + cMuted + '">today</text>';
+    s += '<circle cx="' + X(splitIdx) + '" cy="' + Y(view[splitIdx].cum) + '" r="4" fill="' + cAccent + '"/>';
+  }
+  view.forEach(function(mo, i){
+    if (i > splitIdx && mo.parts.some(function(p){ return p.proj && p.label.indexOf("Mortgage payment") !== 0; })){
+      s += '<circle cx="' + X(i) + '" cy="' + Y(mo.cum) + '" r="4" fill="none" stroke="' + cAccent + '" stroke-width="2"/>';
+    }
+  });
+  var last = view[view.length - 1];
+  s += '<text x="' + (W - padR) + '" y="' + (Y(last.cum) - 8) + '" text-anchor="end" font-size="11.5" font-weight="700" fill="' + cAccent + '">' + short(last.cum) + " by " + last.label + "</text>";
+  s += '<text id="ax-y" transform="translate(14 ' + (padT + ih / 2) + ') rotate(-90)" text-anchor="middle" font-size="11.5" font-weight="700" fill="' + cMuted + '" style="cursor:pointer">Money $</text>';
+  s += '<text id="ax-x" x="' + (padL + iw / 2) + '" y="' + (H - 6) + '" text-anchor="middle" font-size="11.5" font-weight="700" fill="' + cMuted + '" style="cursor:pointer">Month</text>';
+  s += '<line id="xh" x1="0" y1="' + padT + '" x2="0" y2="' + yBase + '" stroke="' + cMuted + '" stroke-width="1" style="display:none"/>';
+  s += '<rect x="' + padL + '" y="' + padT + '" width="' + iw + '" height="' + ih + '" fill="transparent" id="hover"/>';
+  svg.innerHTML = s;
+  function toggleCtl(){ var ctl = el("chartctl"); if (ctl) ctl.hidden = !ctl.hidden; }
+  var axY = svg.querySelector("#ax-y"), axX = svg.querySelector("#ax-x");
+  if (axY) axY.addEventListener("dblclick", toggleCtl);
+  if (axX) axX.addEventListener("dblclick", toggleCtl);
+
+  var tip = el("tip"), xh = svg.querySelector("#xh"), hov = svg.querySelector("#hover");
+  function showTip(clientX){
+    var r = svg.getBoundingClientRect();
+    var px = (clientX - r.left) * (W / r.width);
+    var idx = Math.round((px - padL) / (iw || 1) * (view.length - 1));
+    idx = Math.max(0, Math.min(view.length - 1, idx));
+    var mo = view[idx];
+    xh.style.display = "block";
+    xh.setAttribute("x1", X(idx)); xh.setAttribute("x2", X(idx));
+    var html = '<div class="t-month">' + mo.label + (idx > splitIdx ? " (projected)" : "") + "</div>";
+    var shown = 0, mortSum = 0, mortN = 0;
+    mo.parts.forEach(function(p){
+      if (p.label.indexOf("Mortgage payment") === 0){ mortSum += p.amt; mortN++; return; }
+      if (shown < 4){ html += '<div class="t-row"><span>' + p.label.slice(0, 28) + "</span><span>" + money(p.amt) + "</span></div>"; }
+      shown++;
+    });
+    if (mortN) html += '<div class="t-row"><span>Mortgage payment</span><span>' + money(mortSum) + "</span></div>";
+    if (shown > 4) html += '<div class="t-row"><span>+' + (shown - 4) + " more</span><span></span></div>";
+    if (mo.rentAdd) html += '<div class="t-row" style="color:var(--good)"><span>Rent collected</span><span>+' + money(mo.rentAdd) + "</span></div>";
+    if (!mo.parts.length && !mo.rentAdd) html += '<div class="t-row"><span>nothing this month</span><span></span></div>';
+    html += '<div class="t-tot"><span>Total in</span><span>' + money(mo.cum) + "</span></div>";
+    if (mo.rentCum > 0) html += '<div class="t-tot" style="border-top:0; padding-top:0"><span>Net of rent</span><span>' + money(mo.cum - mo.rentCum) + "</span></div>";
+    tip.innerHTML = html;
+    tip.style.display = "block";
+    var bx = box.getBoundingClientRect();
+    var lx = (X(idx) / W) * r.width;
+    tip.style.left = Math.max(0, Math.min(bx.width - 190, lx + 12)) + "px";
+    tip.style.top = "30px";
+  }
+  function hideTip(){ tip.style.display = "none"; xh.style.display = "none"; }
+  hov.addEventListener("mousemove", function(ev){ showTip(ev.clientX); });
+  hov.addEventListener("mouseleave", hideTip);
+  hov.addEventListener("touchstart", function(ev){ if (ev.touches[0]) showTip(ev.touches[0].clientX); }, { passive: true });
+  hov.addEventListener("touchmove", function(ev){ if (ev.touches[0]) showTip(ev.touches[0].clientX); }, { passive: true });
+  hov.addEventListener("touchend", hideTip);
+  buildEqChart();
+}
+function buildEqChart(){
+  var svg = el("eqchart"), box = el("eqbox");
+  if (!svg || !box) return;
+  var W = Math.max(320, box.clientWidth || 640);
+  var H = 280, padL = 68, padR = 20, padT = 16, padB = 34;
+  var iw = W - padL - padR, ih = H - padT - padB;
+  var now = new Date();
+  var names = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function keyOf(y2, m2){ return y2 + "-" + String(m2 + 1).padStart(2, "0"); }
+  var curKey = keyOf(now.getFullYear(), now.getMonth());
+  var pq = EQ_PURCHASE_KEY.split("-");
+  var y = +pq[0], m = +pq[1] - 1;
+  var endY = now.getFullYear(), endM = now.getMonth() + 14;
+  state.planned.forEach(function(p){
+    var q = p.month.split("-"), py = +q[0], pm = (+q[1] || 1) - 1;
+    if (py * 12 + pm + 2 > endY * 12 + endM){ endY = py; endM = pm + 2; }
+  });
+  var months = [];
+  while (y * 12 + m <= endY * 12 + endM && months.length < 400){
+    months.push({ key: keyOf(y, m), label: names[m] + " ’" + String(y).slice(2) });
+    m++; if (m > 11){ m = 0; y++; }
+  }
+  if (months.length < 2) return;
+  var curPos = 0;
+  months.forEach(function(mo, i){ if (mo.key <= curKey) curPos = i; });
+
+  var fidx = FIRST.getFullYear() * 12 + FIRST.getMonth();
+  function debtAt(key){
+    var kp = key.split("-");
+    var d = (+kp[0]) * 12 + (+kp[1] - 1) - fidx;
+    if (d >= 0) return balAfter(Math.min(d + 1, N_MAX));
+    if (!EQ_REVERSE) return L0;
+    var B = L0;
+    for (var i5 = 0; i5 < -d; i5++){ B = (B + PI) / (1 + RATE_M); }
+    return B;
+  }
+  var pv = Math.max(state.propValue || EQ_PURCHASE_PRICE, 1);
+  var fApr = Math.pow(1 + (state.apprRate || 0) / 100, 1 / 12); // monthly appreciation factor
+  function valueAt(i){
+    if (i > curPos) return pv * Math.pow(fApr, i - curPos);
+    if (curPos <= 0) return pv;
+    return EQ_PURCHASE_PRICE + (pv - EQ_PURCHASE_PRICE) * (i / curPos);
+  }
+  var cash = {};
+  function addCash(key, amt){ if (key < months[0].key) key = months[0].key; cash[key] = (cash[key] || 0) + amt; }
+  state.ledger.forEach(function(e){ addCash((e.date || "").slice(0, 7), e.amt); });
+  state.planned.forEach(function(p){ addCash(p.month < curKey ? curKey : p.month, p.amt); });
+  for (var k2 = 1; k2 <= N_MAX; k2++){
+    var pd = new Date(FIRST.getFullYear(), FIRST.getMonth() + (k2 - 1), 1);
+    var pk = keyOf(pd.getFullYear(), pd.getMonth());
+    if (pk > months[months.length - 1].key) break;
+    if (pk >= months[0].key) addCash(pk, PMT);
+  }
+  var inv = 0, maxV = 1;
+  months.forEach(function(mo, i){
+    mo.debt = debtAt(mo.key);
+    mo.val = valueAt(i);
+    inv += cash[mo.key] || 0; mo.inv = inv;
+    mo.eq = Math.max(0, mo.val - mo.debt);
+    mo.appr = mo.val - EQ_PURCHASE_PRICE;
+    maxV = Math.max(maxV, mo.val, mo.debt, mo.inv);
+  });
+  var hi = (function(){
+    var steps = [25000, 50000, 100000, 250000, 500000, 1000000, 2500000];
+    for (var ns = 0; ns < steps.length; ns++){ if (steps[ns] * 4 >= maxV) return steps[ns] * 4; }
+    return steps[steps.length - 1] * 4;
+  })();
+  function X(i){ return padL + i / (months.length - 1) * iw; }
+  function Y(v){ return padT + ih - Math.max(0, Math.min(1, v / hi)) * ih; }
+  function short(v){
+    if (v >= 1e6) return "$" + (v / 1e6).toFixed(v % 1e6 ? 2 : 0) + "M";
+    if (v >= 1e3) return "$" + Math.round(v / 1e3) + "k";
+    return "$" + Math.round(v);
+  }
+  var css = getComputedStyle(document.documentElement);
+  var cLine = css.getPropertyValue("--line").trim();
+  var cMuted = css.getPropertyValue("--muted").trim();
+  var cAccent = css.getPropertyValue("--accent").trim();
+  var cGood = css.getPropertyValue("--good").trim();
+  var cBad = css.getPropertyValue("--bad").trim();
+  var cInk = css.getPropertyValue("--ink").trim();
+  var cAppr = "#8B6FC9";
+  var yBase = padT + ih;
+
+  var s = "";
+  svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+  svg.setAttribute("height", H);
+  for (var g = 0; g <= 4; g++){
+    var gv = hi * g / 4, gy = Y(gv);
+    s += '<line x1="' + padL + '" y1="' + gy + '" x2="' + (W - padR) + '" y2="' + gy + '" stroke="' + cLine + '" stroke-width="1"/>';
+    s += '<text x="' + (padL - 8) + '" y="' + (gy + 4) + '" text-anchor="end" font-size="11" fill="' + cMuted + '">' + short(gv) + "</text>";
+  }
+  var every = Math.max(1, Math.ceil(months.length / 8));
+  months.forEach(function(mo, i){
+    var isLast = i === months.length - 1;
+    if ((i % every === 0 && !isLast && i <= months.length - 1 - every) || isLast){
+      s += '<text x="' + X(i) + '" y="' + (H - 10) + '" text-anchor="' + (isLast ? "end" : "middle") + '" font-size="11" fill="' + cMuted + '">' + mo.label + "</text>";
+    }
+  });
+  function lineOf(fn){
+    var d = "";
+    months.forEach(function(mo, i){ d += (i ? "L" : "M") + X(i) + " " + Y(fn(mo)); });
+    return d;
+  }
+  if (state.eqShow.debt){
+    var dArea = "M" + X(0) + " " + yBase;
+    months.forEach(function(mo, i){ dArea += "L" + X(i) + " " + Y(mo.debt); });
+    dArea += "L" + X(months.length - 1) + " " + yBase + "Z";
+    s += '<path d="' + dArea + '" fill="' + cBad + '" opacity="0.22"/>';
+    s += '<path d="' + lineOf(function(mo){ return mo.debt; }) + '" fill="none" stroke="' + cBad + '" stroke-width="2"/>';
+  }
+  if (state.eqShow.equity){
+    var eArea = "";
+    months.forEach(function(mo, i){ eArea += (i ? "L" : "M") + X(i) + " " + Y(Math.max(mo.val, mo.debt)); });
+    for (var i6 = months.length - 1; i6 >= 0; i6--){ eArea += "L" + X(i6) + " " + Y(months[i6].debt); }
+    s += '<path d="' + eArea + 'Z" fill="' + cGood + '" opacity="0.25"/>';
+  }
+  if (state.eqShow.value){
+    var vSolid = "", vDash = "";
+    months.forEach(function(mo, i){
+      if (i <= curPos) vSolid += (i ? "L" : "M") + X(i) + " " + Y(mo.val);
+      if (i >= curPos) vDash += (i === curPos ? "M" : "L") + X(i) + " " + Y(mo.val);
+    });
+    s += '<path d="' + vSolid + '" fill="none" stroke="' + cInk + '" stroke-width="2.5" stroke-linejoin="round"/>';
+    s += '<path d="' + vDash + '" fill="none" stroke="' + cInk + '" stroke-width="2.5" stroke-dasharray="6 5" stroke-linejoin="round"/>';
+  }
+  if (state.eqShow.invested){
+    var iSolid = "", iDash = "";
+    months.forEach(function(mo, i){
+      if (i <= curPos) iSolid += (i ? "L" : "M") + X(i) + " " + Y(mo.inv);
+      if (i >= curPos) iDash += (i === curPos ? "M" : "L") + X(i) + " " + Y(mo.inv);
+    });
+    s += '<path d="' + iSolid + '" fill="none" stroke="' + cAccent + '" stroke-width="2"/>';
+    s += '<path d="' + iDash + '" fill="none" stroke="' + cAccent + '" stroke-width="2" stroke-dasharray="5 5"/>';
+  }
+  if (state.eqShow.appr){
+    s += '<path d="' + lineOf(function(mo){ return Math.max(0, mo.appr); }) + '" fill="none" stroke="' + cAppr + '" stroke-width="2" stroke-dasharray="8 4"/>';
+  }
+  s += '<line x1="' + X(curPos) + '" y1="' + padT + '" x2="' + X(curPos) + '" y2="' + yBase + '" stroke="' + cMuted + '" stroke-width="1" stroke-dasharray="2 3"/>';
+  s += '<text x="' + X(curPos) + '" y="' + (padT - 4) + '" text-anchor="middle" font-size="10" fill="' + cMuted + '">today</text>';
+  var curMo = months[curPos];
+  if (state.eqShow.equity){
+    s += '<text x="' + (W - padR) + '" y="' + (Y(months[months.length - 1].val) - 8) + '" text-anchor="end" font-size="11.5" font-weight="700" fill="' + cGood + '">Equity today ' + short(curMo.eq) + "</text>";
+  }
+  s += '<line id="eqxh" x1="0" y1="' + padT + '" x2="0" y2="' + yBase + '" stroke="' + cMuted + '" stroke-width="1" style="display:none"/>';
+  s += '<rect x="' + padL + '" y="' + padT + '" width="' + iw + '" height="' + ih + '" fill="transparent" id="eqhover"/>';
+  svg.innerHTML = s;
+
+  var tip = el("eqtip"), xh = svg.querySelector("#eqxh"), hov = svg.querySelector("#eqhover");
+  function showTip(clientX){
+    var r = svg.getBoundingClientRect();
+    var px = (clientX - r.left) * (W / r.width);
+    var idx = Math.round((px - padL) / (iw || 1) * (months.length - 1));
+    idx = Math.max(0, Math.min(months.length - 1, idx));
+    var mo = months[idx];
+    xh.style.display = "block";
+    xh.setAttribute("x1", X(idx)); xh.setAttribute("x2", X(idx));
+    var html = '<div class="t-month">' + mo.label + (idx > curPos ? " (projected)" : "") + "</div>";
+    html += '<div class="t-row"><span>Property value</span><span>' + money(mo.val) + "</span></div>";
+    html += '<div class="t-row" style="color:var(--bad)"><span>Remaining debt</span><span>' + money(mo.debt) + "</span></div>";
+    html += '<div class="t-row" style="color:var(--good)"><span>Owner equity</span><span>' + money(mo.eq) + "</span></div>";
+    html += '<div class="t-row"><span>Invested to date</span><span>' + money(mo.inv) + "</span></div>";
+    html += '<div class="t-tot"><span>Appreciation</span><span>' + money(mo.appr) + "</span></div>";
+    tip.innerHTML = html;
+    tip.style.display = "block";
+    var bx = box.getBoundingClientRect();
+    var lx = (X(idx) / W) * r.width;
+    tip.style.left = Math.max(0, Math.min(bx.width - 210, lx + 12)) + "px";
+    tip.style.top = "30px";
+  }
+  function hideTip(){ tip.style.display = "none"; xh.style.display = "none"; }
+  hov.addEventListener("mousemove", function(ev){ showTip(ev.clientX); });
+  hov.addEventListener("mouseleave", hideTip);
+  hov.addEventListener("touchstart", function(ev){ if (ev.touches[0]) showTip(ev.touches[0].clientX); }, { passive: true });
+  hov.addEventListener("touchmove", function(ev){ if (ev.touches[0]) showTip(ev.touches[0].clientX); }, { passive: true });
+  hov.addEventListener("touchend", hideTip);
+}
+
+var rsz;
+window.addEventListener("resize", function(){
+  clearTimeout(rsz); rsz = setTimeout(buildChart, 150);
+});
+
+var MS_DEFAULT = [
+  { id: "closed",  label: "Purchase closed",              done: true,  date: "2026-09-16" },
+  { id: "plans",   label: "Plans drawn for the 6 units",  done: false, date: "" },
+  { id: "check",   label: "Plan check submitted to city", done: false, date: "" },
+  { id: "permits", label: "Permits ready to issue",       done: false, date: "" },
+  { id: "build",   label: "Construction start",           done: false, date: "" }
+];
+
+function renderMilestones(){
+  var items = (state.milestones && state.milestones.items) || MS_DEFAULT;
+  var box = el("ms");
+  box.innerHTML = "";
+  items.forEach(function(m, i){
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = m.done ? "done" : "";
+    var dot = document.createElement("span"); dot.className = "dot"; b.appendChild(dot);
+    var lab = document.createElement("span"); lab.textContent = m.label; b.appendChild(lab);
+    var when = document.createElement("span"); when.className = "when num";
+    when.textContent = m.done ? (m.date || "done") : ""; b.appendChild(when);
+    b.addEventListener("click", function(){
+      if (!state.db) return;
+      var prevItems = items.map(function(x){ return { id: x.id, label: x.label, done: x.done, date: x.date }; });
+      var next = items.map(function(x){ return { id: x.id, label: x.label, done: x.done, date: x.date }; });
+      next[i].done = !next[i].done;
+      next[i].date = next[i].done ? new Date().toISOString().slice(0, 10) : "";
+      state.db.doc("meta/milestones").set({ items: next }).then(function(){
+        pushUndo((next[i].done ? "Marked “" : "Un-marked “") + next[i].label + "”", function(){
+          state.db.doc("meta/milestones").set({ items: prevItems }).catch(function(){});
+        });
+      }).catch(function(){});
+    });
+    box.appendChild(b);
+  });
+}
+
+function setMode(m){
+  var simple = m !== "adv";
+  document.querySelector(".wrap").classList.toggle("simple", simple);
+  el("mode-simple").classList.toggle("on", simple);
+  el("mode-adv").classList.toggle("on", !simple);
+  el("mode-simple").setAttribute("aria-pressed", simple ? "true" : "false");
+  el("mode-adv").setAttribute("aria-pressed", simple ? "false" : "true");
+  try { localStorage.setItem("viewMode", simple ? "simple" : "adv"); } catch (err) {}
+  if (!simple) buildChart();
+}
+function boot(){
+  var startMode = "adv";
+  try { startMode = localStorage.getItem("viewMode") || "adv"; } catch (err) {}
+  el("mode-simple").addEventListener("click", function(){ setMode("simple"); });
+  el("mode-adv").addEventListener("click", function(){ setMode("adv"); });
+  setMode(startMode);
+  el("a-date").value = new Date().toISOString().slice(0, 10);
+  el("r-date").value = new Date().toISOString().slice(0, 10);
+  state.ledger = FALLBACK.costs.slice();
+  state.planned = FALLBACK.planned.slice();
+  state.rent = FALLBACK.rent.slice();
+  state.milestones = FALLBACK.milestones;
+  renderLedger();
+  renderRent();
+  renderMilestones();
+
+  // chart controls: scale, axis limits (kept on this device), property value (shared)
+  try {
+    var cs = JSON.parse(localStorage.getItem("chartSettings") || "null");
+    if (cs){
+      state.settings.scale = cs.scale === "log" ? "log" : "lin";
+      state.settings.yMin = typeof cs.yMin === "number" ? cs.yMin : null;
+      state.settings.yMax = typeof cs.yMax === "number" ? cs.yMax : null;
+      state.settings.xMin = cs.xMin || null;
+      state.settings.xMax = cs.xMax || null;
+    }
+  } catch (err) {}
+  function syncCtl(){
+    el("sc-lin").classList.toggle("on", state.settings.scale !== "log");
+    el("sc-log").classList.toggle("on", state.settings.scale === "log");
+    el("y-min").value = state.settings.yMin != null ? state.settings.yMin : "";
+    el("y-max").value = state.settings.yMax != null ? state.settings.yMax : "";
+    el("x-min").value = state.settings.xMin || "";
+    el("x-max").value = state.settings.xMax || "";
+    if (document.activeElement !== el("pv")) el("pv").value = state.propValue;
+    if (document.activeElement !== el("apr")) el("apr").value = state.apprRate;
+  }
+  function saveCtl(){
+    try { localStorage.setItem("chartSettings", JSON.stringify(state.settings)); } catch (err) {}
+    syncCtl(); buildChart();
+  }
+  el("sc-lin").addEventListener("click", function(){ state.settings.scale = "lin"; saveCtl(); });
+  el("sc-log").addEventListener("click", function(){ state.settings.scale = "log"; saveCtl(); });
+  el("y-min").addEventListener("change", function(){
+    var v = parseFloat(el("y-min").value);
+    state.settings.yMin = isFinite(v) && v >= 0 ? v : null; saveCtl();
+  });
+  el("y-max").addEventListener("change", function(){
+    var v = parseFloat(el("y-max").value);
+    state.settings.yMax = isFinite(v) && v > 0 ? v : null; saveCtl();
+  });
+  el("x-min").addEventListener("change", function(){ state.settings.xMin = el("x-min").value || null; saveCtl(); });
+  el("x-max").addEventListener("change", function(){ state.settings.xMax = el("x-max").value || null; saveCtl(); });
+  el("pv").addEventListener("change", function(){
+    var v = parseFloat(el("pv").value);
+    if (!(v > 0)) return;
+    var prevPv = state.propValue;
+    state.propValue = v; buildChart();
+    if (state.db){
+      state.db.doc("meta/settings").set({ propValue: v, apprRate: state.apprRate }).then(function(){
+        pushUndo("Set property value to " + money(v), function(){
+          state.propValue = prevPv; syncCtl(); buildChart();
+          state.db.doc("meta/settings").set({ propValue: prevPv, apprRate: state.apprRate }).catch(function(){});
+        });
+      }).catch(function(){});
+    }
+  });
+  el("apr").addEventListener("change", function(){
+    var v = parseFloat(el("apr").value);
+    if (!isFinite(v)) return;
+    var prevA = state.apprRate;
+    state.apprRate = v; buildEqChart();
+    if (state.db){
+      state.db.doc("meta/settings").set({ propValue: state.propValue, apprRate: v }).then(function(){
+        pushUndo("Set appreciation to " + v + "%/yr", function(){
+          state.apprRate = prevA; el("apr").value = prevA; buildEqChart();
+          state.db.doc("meta/settings").set({ propValue: state.propValue, apprRate: prevA }).catch(function(){});
+        });
+      }).catch(function(){});
+    }
+  });
+  // equity chart layer toggles
+  try {
+    var et = JSON.parse(localStorage.getItem("eqToggles") || "null");
+    if (et){ Object.keys(state.eqShow).forEach(function(k){ if (typeof et[k] === "boolean") state.eqShow[k] = et[k]; }); }
+  } catch (err) {}
+  document.querySelectorAll("#eqtoggles .eqchip").forEach(function(ch){
+    var k = ch.getAttribute("data-k");
+    ch.classList.toggle("off", !state.eqShow[k]);
+    ch.addEventListener("click", function(){
+      state.eqShow[k] = !state.eqShow[k];
+      try { localStorage.setItem("eqToggles", JSON.stringify(state.eqShow)); } catch (err) {}
+      ch.classList.toggle("off", !state.eqShow[k]);
+      buildEqChart();
+    });
+  });
+  syncCtl();
+  buildChart();
+
+  var rform = el("radd");
+  rform.addEventListener("submit", function(ev){
+    ev.preventDefault();
+    if (!state.db) return;
+    var amt = parseFloat(el("r-amt").value);
+    if (!(amt > 0)) return;
+    var btn = el("r-btn");
+    btn.disabled = true;
+    var body = {
+      date: el("r-date").value,
+      unit: el("r-unit").value.trim(),
+      desc: el("r-desc").value.trim(),
+      amt: Math.round(amt * 100) / 100,
+      ts: Date.now()
+    };
+    var editingId = state.editRent;
+    var prev = editingId ? state.rent.filter(function(x){ return x.id === editingId; })[0] : null;
+    var op = editingId
+      ? state.db.collection("rent").doc(editingId).set(body)
+      : state.db.collection("rent").add(body);
+    op.then(function(ref){
+      if (editingId){
+        if (prev) pushUndo("Edited rent “" + (prev.unit || prev.desc) + "”", function(){
+          state.db.collection("rent").doc(editingId).set({ date: prev.date, unit: prev.unit, desc: prev.desc, amt: prev.amt, ts: Date.now() }).catch(function(){});
+        });
+        clearEditRent();
+      } else {
+        pushUndo("Added rent “" + (body.unit || body.desc) + "”", function(){ ref.delete().catch(function(){}); });
+        el("r-unit").value = ""; el("r-desc").value = ""; el("r-amt").value = "";
+      }
+    }).catch(function(){}).then(function(){ btn.disabled = false; });
+  });
+  el("r-cancel").addEventListener("click", clearEditRent);
+  el("toast-undo").addEventListener("click", function(){
+    var f = lastUndo; lastUndo = null; hideToast();
+    if (f) f();
+  });
+  el("toast-x").addEventListener("click", hideToast);
+
+
+  var form = el("add");
+  el("a-cat").addEventListener("change", syncDescHint);
+  form.addEventListener("submit", function(ev){
+    ev.preventDefault();
+    if (!state.db) return;
+    var amt = parseFloat(el("a-amt").value);
+    if (!(amt > 0)) return;
+    var dateVal = el("a-date").value;
+    if (!dateVal) return;
+    var btn = el("a-btn");
+    btn.disabled = true;
+    var cat = el("a-cat").value;
+    var a2 = Math.round(amt * 100) / 100;
+    var desc = el("a-desc").value.trim();
+    var isProj = !IN_CATS[cat] && el("a-kind").value === "Projected";
+    var target = cat === "Rent" ? "rent" : (isProj ? "planned" : "costs");
+    var ed = null;
+    var body;
+    if (target === "rent") body = { date: dateVal, unit: desc, desc: (ed && ed.store === "rent" ? (ed.raw.desc || "") : ""), amt: a2, ts: Date.now() };
+    else if (target === "planned") body = { month: dateVal.slice(0, 7), date: dateVal, cat: cat, desc: desc, amt: a2, ts: Date.now() };
+    else body = { date: dateVal, cat: cat, desc: desc, amt: cat === "Refund" ? -a2 : a2, ts: Date.now() };
+    var op;
+    if (ed && ed.store === target){
+      op = state.db.collection(target).doc(ed.id).set(body).then(function(){ return null; });
+    } else if (ed){
+      op = state.db.collection(target).add(body).then(function(ref){
+        return state.db.collection(ed.store).doc(ed.id).delete().then(function(){ return ref; });
+      });
+    } else {
+      op = state.db.collection(target).add(body);
+    }
+    op.then(function(ref){
+      if (ed){
+        var prevRaw = Object.assign({}, ed.raw, { ts: Date.now() });
+        pushUndo("Edited “" + (desc || cat) + "”", function(){
+          if (ref) ref.delete().catch(function(){});
+          state.db.collection(ed.store).doc(ed.id).set(prevRaw).catch(function(){});
+        });
+        clearEditCost();
+      } else {
+        pushUndo("Added “" + (desc || cat) + "”", function(){ if (ref) ref.delete().catch(function(){}); });
+        el("a-desc").value = ""; el("a-amt").value = "";
+      }
+    }).catch(function(){}).then(function(){ btn.disabled = false; });
+  });
+  el("a-cancel").addEventListener("click", clearEditCost);
+
+  (window.claude && window.claude.use ? window.claude.use("db") : Promise.resolve(null)).then(function(db){
+    if (!db){
+      el("a-btn").disabled = true;
+      el("r-btn").disabled = true;
+      state.ledger = FALLBACK.costs.slice();
+      state.planned = FALLBACK.planned.slice();
+      state.rent = FALLBACK.rent.slice();
+      state.milestones = FALLBACK.milestones;
+      showFallbackNote();
+      renderLedger();
+      renderRent();
+      renderMilestones();
+      buildChart();
+      return;
+    }
+    state.db = db;
+    db.collection("receipts").orderBy("date", "desc").onSnapshot(function(snap){
+      var live = snap.docs.map(function(d){
+        var v = d.data() || {};
+        return { id: d.id, date: String(v.date || ""), desc: String(v.desc || ""), amt: Number(v.amt) || 0 };
+      });
+      if (live.length) state.receipts = live;
+      renderReceipts();
+    }, function(){});
+    db.collection("rent").orderBy("date", "desc").onSnapshot(function(snap){
+      state.rent = snap.docs.map(function(d){
+        var v = d.data() || {};
+        return { id: d.id, date: String(v.date || ""), unit: String(v.unit || ""),
+                 desc: String(v.desc || ""), amt: Number(v.amt) || 0 };
+      });
+      renderRent();
+      renderLedger();
+      buildChart();
+    }, function(){ fbApply(); });
+    db.collection("costs").orderBy("date", "desc").onSnapshot(function(snap){
+      state.ledger = snap.docs.map(function(d){
+        var v = d.data() || {};
+        return { id: d.id, date: String(v.date || ""), cat: String(v.cat || "Other"),
+                 desc: String(v.desc || ""), amt: Number(v.amt) || 0 };
+      });
+      if (!state.ledger.length && FALLBACK.costs.length){ state.ledger = FALLBACK.costs.slice(); showFallbackNote(); }
+      renderLedger();
+      buildChart();
+    }, function(){ fbApply(); });
+    db.collection("planned").orderBy("month", "asc").onSnapshot(function(snap){
+      state.planned = snap.docs.map(function(d){
+        var v = d.data() || {};
+        return { id: d.id, month: String(v.month || ""), date: String(v.date || ""),
+                 cat: String(v.cat || "Other"), desc: String(v.desc || ""), amt: Number(v.amt) || 0 };
+      });
+      if (!state.planned.length && FALLBACK.planned.length){ state.planned = FALLBACK.planned.slice(); showFallbackNote(); }
+      renderLedger();
+      buildChart();
+    }, function(){ fbApply(); });
+    db.doc("meta/settings").onSnapshot(function(snap){
+      if (snap.exists){
+        var dd = snap.data() || {};
+        var v = Number(dd.propValue), ar = Number(dd.apprRate), ch = false;
+        if (v > 0 && v !== state.propValue){
+          state.propValue = v;
+          if (document.activeElement !== el("pv")) el("pv").value = v;
+          ch = true;
+        }
+        if (isFinite(ar) && ar !== state.apprRate){
+          state.apprRate = ar;
+          if (document.activeElement !== el("apr")) el("apr").value = ar;
+          ch = true;
+        }
+        if (ch) buildChart();
+      }
+    }, function(){ fbApply(); });
+    db.doc("meta/milestones").onSnapshot(function(snap){
+      state.milestones = snap.exists ? snap.data() : FALLBACK.milestones;
+      renderMilestones();
+    }, function(){ fbApply(); });
+  }).catch(function(){
+    el("a-btn").disabled = true;
+    el("r-btn").disabled = true;
+    fbApply();
+  });
+
+  // last-resort watchdog: if nothing has rendered after 12 s, show the saved copy
+  setTimeout(function(){ if (!state.ledger.length) fbApply(); }, 12000);
+}
+boot();
+</script>
+<script src="mobile.js"></script>
+</body></html>

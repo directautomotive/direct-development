@@ -66,18 +66,12 @@ a.proj-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
     <div>
       <span class="pill">Direct Development Group LLC</span>
       <h1>Current development projects</h1>
-      <div class="sub">Every dollar in and out, per project. Tap a project to open its full ledger.</div>
+      <div class="sub">Tap a project to open its ledger.</div>
     </div>
     <span class="sp"></span>
     <button type="button" id="signout" hidden>Sign out</button>
   </header>
 
-  <section class="tiles num">
-    <div class="tile hot"><div class="label">Paid across all projects</div><div class="big out" id="t-paid">&mdash;</div><div class="note" id="t-paid-n">project costs + mortgage payments made</div></div>
-    <div class="tile"><div class="label">Projected &mdash; still to pay</div><div class="big proj" id="t-proj">&mdash;</div><div class="note">planned costs not paid yet</div></div>
-    <div class="tile"><div class="label">Rent collected</div><div class="big in" id="t-rent">&mdash;</div><div class="note">all units, all projects</div></div>
-    <div class="tile"><div class="label">Mortgage payments</div><div class="big" id="t-mort">&mdash;</div><div class="note" id="t-mort-n">per month, all projects</div></div>
-  </section>
 
   <section>
     <h2 style="margin-bottom:10px">Projects</h2>
@@ -88,7 +82,7 @@ a.proj-card:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
 <script>
 "use strict";
-var PAGES = { "hope-2729": "hope.html" };            // project id -> its ledger page
+var PAGES = { "hope-2729": "hope.html", "converse-6421": "converse.html" };            // project id -> its ledger page
 var COLORS = { "hope-2729": "#1E6E9C", "converse-6421": "#2F7D4F" };
 function el(id){ return document.getElementById(id); }
 function money(n){ return (n < 0 ? "−" : "") + "$" + Math.abs(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}); }
@@ -108,7 +102,7 @@ DDG.ready().then(function(user){
   projects.forEach(function(p){
     var E = entries.filter(function(e){ return e.project === p.id; });
     var t = { cost: 0, planned: 0, rent: 0, n: E.length };
-    E.forEach(function(e){ if (t[e.kind] != null) t[e.kind] += e.amt; });
+    E.forEach(function(e){ if (e.kind === "cost" && e.amt < 0) t.rent += -e.amt; else if (t[e.kind] != null) t[e.kind] += e.amt; });
     var s = p.settings || {}, mp = mortgagePaid(s);
     var paid = t.cost + mp.amt;
     all.paid += paid; all.proj += t.planned; all.rent += t.rent; all.mort += s.payment || 0;
@@ -121,17 +115,13 @@ DDG.ready().then(function(user){
       + '<dl class="facts num">'
       + '<dt>Paid (project costs + ' + mp.n + ' mortgage payment' + (mp.n === 1 ? "" : "s") + ')</dt><dd class="out">' + money(paid) + '</dd>'
       + '<dt>Projected &mdash; still to pay</dt><dd class="proj">' + money(t.planned) + '</dd>'
-      + '<dt>Rent collected</dt><dd class="in">+' + money(t.rent) + '</dd>'
+      + '<dt>Money in (rent + refunds)</dt><dd class="in">+' + money(t.rent) + '</dd>'
       + '<dt>Mortgage &mdash; ' + esc(s.lender || "lender") + '</dt><dd>' + (s.payment ? money(s.payment) + '/month' : '&mdash;') + '</dd>'
       + '<dt>Entries logged</dt><dd>' + t.n + '</dd></dl>'
       + (page ? '' : '<span class="tag">Ledger moving over next &mdash; still on its Claude tracker for now</span>')
       + '</' + tagName + '>';
   });
   el("projects").innerHTML = html || '<div class="note">No projects yet.</div>';
-  el("t-paid").textContent = money(all.paid);
-  el("t-proj").textContent = money(all.proj);
-  el("t-rent").textContent = "+" + money(all.rent);
-  el("t-mort").textContent = money(all.mort);
 }).catch(function(err){
   el("projects").innerHTML = '<div class="note" style="color:var(--bad)">Couldn’t load: ' + esc(err.message || err) + '</div>';
 });

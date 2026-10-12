@@ -88,6 +88,8 @@ body.m-on #m-add{display:block}\
       }
     } else if (tab === "planned"){
       state.planned.forEach(function(e){ r.push({ store:"planned", e:e, date:e.date || e.month, title:e.desc || e.cat, sub:e.cat, amt:e.amt, cls:"yel" }); });
+    } else if (tab === "receipt"){
+      (state.receipts || []).forEach(function(e){ r.push({ store:"receipts", e:e, date:e.date, title:e.desc || "Receipt", sub:"Receipt", amt:e.amt, cls:"" }); });
     } else {
       state.rent.forEach(function(e){ r.push({ store:"rent", e:e, date:e.date, title:(e.unit || "Rent") + (e.desc ? " — " + e.desc : ""), sub:"Rent", amt:e.amt, cls:"grn" }); });
     }
@@ -97,9 +99,10 @@ body.m-on #m-add{display:block}\
 
   function render(){
     if (!$("m")) return;
-    var paid = state.ledger.reduce(function(s,e){ return s + e.amt; }, 0) + paymentsMade() * PMT;
+    var paid = state.ledger.reduce(function(s,e){ return s + (e.amt > 0 ? e.amt : 0); }, 0) + paymentsMade() * PMT;
+    var refunds = state.ledger.reduce(function(s,e){ return s + (e.amt < 0 ? -e.amt : 0); }, 0);
     var proj = state.planned.reduce(function(s,e){ return s + e.amt; }, 0);
-    var rent = state.rent.reduce(function(s,e){ return s + e.amt; }, 0);
+    var rent = state.rent.reduce(function(s,e){ return s + e.amt; }, 0) + refunds;
     $("m-paid").textContent = money(paid);
     $("m-proj").textContent = money(proj);
     $("m-rent").textContent = "+" + money(rent);
@@ -116,7 +119,12 @@ body.m-on #m-add{display:block}\
         + '<div class="d"><div class="t">' + esc(r.title) + '</div><div class="s">' + mdy(r.date) + ' · ' + esc(r.sub) + cam + '</div></div>'
         + '<div class="a ' + r.cls + '">' + (r.cls === "grn" ? "+" : "") + money(r.amt) + '</div></button>';
     });
-    if (rows.length) h += '<div class="mtot"><span>Total</span><span class="' + (M.tab === "cost" ? "red" : M.tab === "planned" ? "yel" : "grn") + '">' + money(tot) + '</span></div>';
+    if (M.tab === "receipt"){
+      var cash = state.ledger.reduce(function(s2, e){ return s2 + (/^Dad\b/.test(e.desc || "") && e.cat === "Materials" ? e.amt : 0); }, 0);
+      h += '<div class="mtot"><span>Receipts total</span><span>' + money(tot) + '</span></div>'
+        + '<div class="mtot"><span>Cash given to Dad for materials</span><span>' + money(cash) + '</span></div>'
+        + '<div class="mtot"><span>Cash on hand (not covered by a receipt)</span><span class="' + (cash - tot < 0 ? "red" : "grn") + '">' + (cash - tot < 0 ? "−" : "") + money(cash - tot) + '</span></div>';
+    } else if (rows.length) h += '<div class="mtot"><span>Total</span><span class="' + (M.tab === "cost" ? "red" : M.tab === "planned" ? "yel" : "grn") + '">' + money(tot) + '</span></div>';
     $("m-list").innerHTML = h;
     $("m-list").querySelectorAll(".mrow").forEach(function(b){
       var r = rows[+b.getAttribute("data-i")];
@@ -131,14 +139,14 @@ body.m-on #m-add{display:block}\
 
   function openSheet(r){
     M.edit = r || null;
-    M.kind = r ? (r.store === "costs" ? "cost" : r.store === "planned" ? "planned" : "rent") : (M.tab === "rent" ? "rent" : M.tab === "planned" ? "planned" : "cost");
+    M.kind = r ? (r.store === "costs" ? "cost" : r.store === "planned" ? "planned" : r.store === "receipts" ? "receipt" : "rent") : M.tab;
     var e = r ? r.e : null;
     var raw = e && window.DDG && DDG.raw ? DDG.raw(e.id) : null;
     M.photo = raw && raw.meta ? raw.meta.photo : undefined;
     var d = document.createElement("div"); d.id = "m-sheet";
     d.innerHTML = '<div class="sh" role="dialog" aria-label="' + (e ? "Edit entry" : "Add entry") + '">'
       + '<h3>' + (e ? "Edit entry" : "Add entry") + '</h3>'
-      + '<div class="seg" id="ms-kind"><button type="button" data-k="cost">Paid</button><button type="button" data-k="planned">Projected</button><button type="button" data-k="rent">Rent</button></div>'
+      + '<div class="seg" id="ms-kind"><button type="button" data-k="cost">Paid</button><button type="button" data-k="planned">Projected</button><button type="button" data-k="rent">Rent</button>' + (hasReceipts() ? '<button type="button" data-k="receipt">Receipt</button>' : '') + '</div>'
       + '<label for="ms-amt">Amount ($)</label><input id="ms-amt" class="amt" type="number" inputmode="decimal" step="0.01" min="0" placeholder="0.00" value="' + (e ? Math.abs(e.amt) : "") + '">'
       + '<label for="ms-desc" id="ms-desc-l">Description</label><input id="ms-desc" value="' + esc(e ? (M.kind === "rent" ? e.unit : e.desc) : "") + '" placeholder="e.g. Home Depot lumber">'
       + '<label for="ms-date">Date</label><input id="ms-date" type="date" value="' + esc(e ? (e.date || (e.month ? e.month + "-01" : "")) : today()) + '">'
@@ -153,8 +161,8 @@ body.m-on #m-add{display:block}\
     document.body.appendChild(d);
     function syncKind(){
       d.querySelectorAll("#ms-kind button").forEach(function(b){ b.classList.toggle("on", b.getAttribute("data-k") === M.kind); });
-      $("ms-cat-w").hidden = M.kind === "rent";
-      $("ms-desc-l").textContent = M.kind === "rent" ? "Unit / tenant" : "Description";
+      $("ms-cat-w").hidden = M.kind === "rent" || M.kind === "receipt";
+      $("ms-desc-l").textContent = M.kind === "rent" ? "Unit / tenant" : M.kind === "receipt" ? "Store and what was bought" : "Description";
     }
     d.querySelectorAll("#ms-kind button").forEach(function(b){ b.onclick = function(){ M.kind = b.getAttribute("data-k"); syncKind(); }; });
     syncKind();
@@ -196,11 +204,13 @@ body.m-on #m-add{display:block}\
     var desc = $("ms-desc").value.trim();
     var b = kind === "rent"
       ? { date: date, unit: desc, desc: M.edit && M.edit.store === "rent" ? (M.edit.e.desc || "") : "", amt: amt }
+      : kind === "receipt" ? { date: date, desc: desc, amt: amt }
       : { date: date, month: date.slice(0, 7), cat: $("ms-cat").value, desc: desc, amt: amt };
     if (M.photo !== undefined) b.photo = M.photo;
     return b;
   }
-  function storeOf(kind){ return kind === "cost" ? "costs" : kind === "planned" ? "planned" : "rent"; }
+  function storeOf(kind){ return kind === "cost" ? "costs" : kind === "planned" ? "planned" : kind === "receipt" ? "receipts" : "rent"; }
+  function hasReceipts(){ return Array.isArray(state.receipts); }
   function move(target, body, label){
     var r0 = M.edit;
     var op;
@@ -208,7 +218,7 @@ body.m-on #m-add{display:block}\
     else if (r0.store === target) op = state.db.collection(target).doc(r0.e.id).set(body);
     else op = state.db.collection(target).add(body).then(function(ref){ return state.db.collection(r0.store).doc(r0.e.id).delete().then(function(){ return ref; }); });
     $("ms-save").disabled = true;
-    op.then(function(){ close(); M.tab = target === "costs" ? "cost" : target; render(); if (typeof pushUndo === "function" && label) { /* toast only */ } })
+    op.then(function(){ close(); M.tab = target === "costs" ? "cost" : target === "receipts" ? "receipt" : target; render(); if (typeof pushUndo === "function" && label) { /* toast only */ } })
       .catch(function(err){ $("ms-save").disabled = false; if (err && err.message !== "cancelled") $("ms-msg").textContent = err.message || String(err); });
   }
   function save(){
@@ -230,9 +240,9 @@ body.m-on #m-add{display:block}\
       + '<h1>' + esc(name) + '</h1><div class="msub">' + esc(sub) + '</div>'
       + '<div class="mtiles"><div class="mt"><div class="l">Paid</div><div class="v red" id="m-paid">—</div></div>'
       + '<div class="mt"><div class="l">Projected</div><div class="v yel" id="m-proj">—</div></div>'
-      + '<div class="mt"><div class="l">Rent in</div><div class="v grn" id="m-rent">—</div></div>'
+      + '<div class="mt"><div class="l">Money in (rent + refunds)</div><div class="v grn" id="m-rent">—</div></div>'
       + '<div class="mt"><div class="l">Owed on loan</div><div class="v" id="m-owed">—</div></div></div>'
-      + '<div class="mtabs"><button type="button" data-t="cost">Paid</button><button type="button" data-t="planned">Projected</button><button type="button" data-t="rent">Rent</button></div>'
+      + '<div class="mtabs"><button type="button" data-t="cost">Paid</button><button type="button" data-t="planned">Projected</button><button type="button" data-t="rent">Rent</button>' + (hasReceipts() ? '<button type="button" data-t="receipt">Receipts</button>' : '') + '</div>'
       + '<div class="mlist" id="m-list"></div>'
       + '<button type="button" class="mfull" id="m-signout">Sign out</button>';
     document.body.insertBefore(m, document.body.firstChild);
@@ -246,7 +256,8 @@ body.m-on #m-add{display:block}\
     if (nav){ var b = document.createElement("button"); b.type = "button"; b.className = "m-fullbtn"; b.textContent = "Simple phone view";
       b.onclick = function(){ setView("simple"); }; nav.insertBefore(b, nav.querySelector(".sp")); }
     // re-render whenever the page re-renders its ledger or rent
-    var rl = window.renderLedger, rr = window.renderRent;
+    var rl = window.renderLedger, rr = window.renderRent, rc = window.renderReceipts;
+    if (typeof rc === "function") window.renderReceipts = function(){ rc.apply(this, arguments); render(); };
     window.renderLedger = function(){ rl.apply(this, arguments); render(); };
     window.renderRent = function(){ rr.apply(this, arguments); render(); };
     apply(); render();
